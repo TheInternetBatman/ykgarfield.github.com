@@ -1,9 +1,9 @@
  $(document).ready(function(){
-    var name = decodeURI(getUrlVar("name"));
-    if (name == "undefined") {
-    	name = "Happy!";
-    } else {
-    	name = "祝" + name + "童鞋 Happy!"
+    var msg = decodeURI(getUrlVar("msg"));
+
+    if(msg == "undefined") {
+    	msg == "Happy!" 
     }
-    $("#nameSpan").html(name);
+
+    $("#msgSpan").html(msg);
 });
