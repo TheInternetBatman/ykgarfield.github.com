@@ -1,0 +1,525 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>管理 Jetty Base 和 Jetty Home</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="startup.html" title="Chapter&nbsp;9.&nbsp;Starting Jetty">
+<link rel="prev" href="startup-modules.html" title="Managing Startup Modules">
+<link rel="next" href="start-jar.html" title="Using start.jar">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">管理 Jetty Base 和 Jetty Home</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="startup-modules.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<th width="60%" align="center">第9章 &nbsp; 启动 Jetty<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="start-jar.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="section">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both">
+						<a name="startup-base-and-home"></a>管理 Jetty Base 和 Jetty Home
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<dl>
+				<dt>
+					<span class="section"><a href="startup-base-and-home.html#demo-base">Jetty 分发包中的 Demo-Base</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="startup-base-and-home.html#d0e8202">声明 Jetty Base</a></span>
+				</dt>
+			</dl>
+		</div>
+		<p>
+			从 Jetty 9.1 开始,可用维护独立的 Jetty 二进制安装(也称作 <code class="filename">${jetty.home}</code>),
+			和为你特定的环境自定义(也称作 <code class="filename">${jetty.base}</code>) 的分离.
+		</p>
+		<div class="variablelist">
+			<dl>
+				<dt>
+					<span class="term">Jetty Base</span>
+				</dt>
+				<dd>
+					<p>
+						也被称为 <code class="filename">${jetty.base}</code> 属性
+					</p>
+					<p>这是你配置和自定义 Jetty 分发包的位置.</p>
+				</dd>
+				<dt>
+					<span class="term">Jetty Home</span>
+				</dt>
+				<dd>
+					<p>
+						也被称为 <code class="filename">${jetty.home}</code> 属性
+					</p>
+					<p>
+						这是 Jetty 分发包二进制,默认 XML IoC 配置,和默认模块定义的位置.
+					</p>
+				</dd>
+			</dl>
+		</div>
+		<p>潜在的配置从这2个目录位置解析.</p>
+		<div class="variablelist">
+			<a name="base-vs-home-resolution"></a>
+			<p class="title">
+				<b>配置解析规则</b>
+			</p>
+			<dl>
+				<dt>
+					<span class="term">检查 Jetty Base</span>
+				</dt>
+				<dd>
+					<p>如果相对于定义的 Jetty Base 的引用配置存在,那么就使用它.</p>
+				</dd>
+				<dt>
+					<span class="term">检查 Jetty Home</span>
+				</dt>
+				<dd>
+					<p>如果相对于定义的 Jetty Home 的引用配置存在,那么就使用它.</p>
+				</dd>
+				<dt>
+					<span class="term">使用 java.io.File(String pathname) 逻辑</span>
+				</dt>
+				<dd>
+					<p>
+						最后,使用引用作为一个 <code class="code">
+							<a class="code" href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html#File(java.lang.String)"
+								target="_top">java.io.File(String pathname)</a>
+						</code> 引用,
+						下面是哪个构造函数的默认解析规则.
+					</p>
+					<p>
+						简单地说,引用将被用作:相对(当前工作目录, 又叫做, ${user.dir} 或绝对路径,或者甚至是网络应用(比如 在 Windows,并使用 UNC 路径)).
+					</p>
+				</dd>
+			</dl>
+		</div>
+		<p>
+			对于关于使用 start.jar 是如何工作的更多细节,查看  <a class="link" href="">使用 start.jar: 执行</a>
+		</p>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="demo-base"></a>Jetty 分发包中的 Demo-Base
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				Jetty 分发包自带了一个示例 ${jetty.base},它启用了各种演示 webapps 和服务器配置.
+			</p>
+			<p>如何将 demo-base 目录作为 Jetty Base 目录使用</p>
+			<div class="screenexample">
+				<pre class="screen">[jetty-distribution-9.2.3.v20140905]$ ls -la
+total 496
+drwxrwxr-x 11 user group   4096 Oct  8 15:23 ./
+drwxr-xr-x 14 user group   4096 Oct  8 13:04 ../
+drwxrwxr-x  2 user group   4096 Oct  8 06:54 bin/
+drwxrwxr-x  6 user group   4096 Oct  8 06:54 demo-base/
+drwxrwxr-x  2 user group   4096 Oct 11 15:14 etc/
+drwxrwxr-x 11 user group   4096 Oct  8 06:54 lib/
+-rw-rw-r--  1 user group  30012 Sep 30 19:55 license-eplv10-aslv20.html
+drwxrwxr-x  2 user group   4096 Oct  8 06:54 logs/
+drwxrwxr-x  2 user group   4096 Oct  8 06:54 modules/
+-rw-rw-r--  1 user group   6262 Sep 30 19:55 notice.html
+-rw-rw-r--  1 user group   1249 Sep 30 19:55 README.TXT
+drwxrwxr-x  2 user group   4096 Oct  8 06:54 resources/
+drwxrwxr-x  2 user group   4096 Oct  8 06:54 start.d/
+-rw-rw-r--  1 user group   1780 Sep 30 19:55 start.ini
+-rw-rw-r--  1 user group  71921 Sep 30 19:55 start.jar
+-rw-rw-r--  1 user group 336468 Sep 30 19:55 VERSION.txt
+drwxrwxr-x  2 user group   4096 Oct  8 06:54 webapps/
+[jetty-distribution-9.2.3.v20140905]$ cd demo-base
+[demo-base]$ java -jar ../start.jar
+2013-10-16 09:08:47.800:WARN::main: demo test-realm is deployed. DO NOT USE IN PRODUCTION!
+2013-10-16 09:08:47.802:INFO:oejs.Server:main: jetty-9.2.3.v20140905
+2013-10-16 09:08:47.817:INFO:oejdp.ScanningAppProvider:main: Deployment monitor [file:/home/user/jetty-distribution-9.2.3.v20140905/demo-base/webapps/] at interval 1
+2013-10-16 09:08:48.072:WARN::main: async-rest webapp is deployed. DO NOT USE IN PRODUCTION!
+...
+</pre>
+			</div>
+			<p>
+				正如你在上面所看到的,你正在使用 Jetty Base 概念执行 demo-base 配置
+			</p>
+			<p>
+				如果你想不用执行 Jetty 而看下 Jetty Base 看起来是什么样的,你可以简单的列出配置 
+			</p>
+			<div class="screenexample">
+				<pre class="screen">[my-base]$ java -jar ../start.jar --list-config
+
+Java Environment:
+-----------------
+ java.home=/usr/lib/jvm/jdk-7u21-x64/jre
+ java.vm.vendor=Oracle Corporation
+ java.vm.version=23.21-b01
+ java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+ java.vm.info=mixed mode
+ java.runtime.name=Java(TM) SE Runtime Environment
+ java.runtime.version=1.7.0_21-b11
+ java.io.tmpdir=/tmp
+
+Jetty Environment:
+-----------------
+ jetty.home=/home/user/jetty-distribution-9.2.3.v20140905
+ jetty.base=/home/user/jetty-distribution-9.2.3.v20140905/demo-base
+ jetty.version=9.2.3.v20140905
+
+JVM Arguments:
+--------------
+ (no jvm args specified)
+
+System Properties:
+------------------
+ jetty.base = /home/user/jetty-distribution-9.2.3.v20140905/demo-base
+ jetty.home = /home/user/jetty-distribution-9.2.3.v20140905
+
+Properties:
+-----------
+ demo.realm = etc/realm.properties
+ https.port = 8443
+ https.timeout = 30000
+ jaas.login.conf = etc/login.conf
+ jetty.dump.start = false
+ jetty.dump.stop = false
+ jetty.keymanager.password = OBF:1u2u1wml1z7s1z7a1wnl1u2g
+ jetty.keystore = etc/keystore
+ jetty.keystore.password = OBF:1vny1zlo1x8e1vnw1vn61x8g1zlu1vn4
+ jetty.port = 8080
+ jetty.secure.port = 8443
+ jetty.truststore = etc/keystore
+ jetty.truststore.password = OBF:1vny1zlo1x8e1vnw1vn61x8g1zlu1vn4
+ org.eclipse.jetty.websocket.jsr356 = false
+ threads.max = 200
+ threads.min = 10
+ threads.timeout = 60000
+
+Jetty Server Classpath:
+-----------------------
+Version Information on 42 entries in the classpath.
+Note: order presented here is how they would appear on the classpath.
+      changes to the --module=name command line options will be reflected here.
+ 0:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-client-9.2.3.v20140905.jar
+ 1:      1.4.1.v201005082020 | ${jetty.base}/lib/ext/javax.mail.glassfish-1.4.1.v201005082020.jar
+ 2:               9.2.3.v20140905 | ${jetty.base}/lib/ext/test-mock-resources-9.2.3.v20140905.jar
+ 3:                    (dir) | ${jetty.home}/resources
+ 4:                    3.1.0 | ${jetty.home}/lib/servlet-api-3.1.jar
+ 5:                  3.1.RC0 | ${jetty.home}/lib/jetty-schemas-3.1.jar
+ 6:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-http-9.2.3.v20140905.jar
+ 7:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-continuation-9.2.3.v20140905.jar
+ 8:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-server-9.2.3.v20140905.jar
+ 9:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-xml-9.2.3.v20140905.jar
+10:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-util-9.2.3.v20140905.jar
+11:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-io-9.2.3.v20140905.jar
+12:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-jaas-9.2.3.v20140905.jar
+13:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-jndi-9.2.3.v20140905.jar
+14:      1.1.0.v201105071233 | ${jetty.home}/lib/jndi/javax.activation-1.1.0.v201105071233.jar
+15:      1.4.1.v201005082020 | ${jetty.home}/lib/jndi/javax.mail.glassfish-1.4.1.v201005082020.jar
+16:                      1.2 | ${jetty.home}/lib/jndi/javax.transaction-api-1.2.jar
+17:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-rewrite-9.2.3.v20140905.jar
+18:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-security-9.2.3.v20140905.jar
+19:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-servlet-9.2.3.v20140905.jar
+20:                    3.0.0 | ${jetty.home}/lib/jsp/javax.el-3.0.0.jar
+21:      1.2.0.v201105211821 | ${jetty.home}/lib/jsp/javax.servlet.jsp.jstl-1.2.0.v201105211821.jar
+22:                    2.3.2 | ${jetty.home}/lib/jsp/javax.servlet.jsp-2.3.2.jar
+23:                    2.3.1 | ${jetty.home}/lib/jsp/javax.servlet.jsp-api-2.3.1.jar
+24:                    2.3.3 | ${jetty.home}/lib/jsp/jetty-jsp-jdt-2.3.3.jar
+25:      1.2.0.v201112081803 | ${jetty.home}/lib/jsp/org.apache.taglibs.standard.glassfish-1.2.0.v201112081803.jar
+26:   3.8.2.v20130121-145325 | ${jetty.home}/lib/jsp/org.eclipse.jdt.core-3.8.2.v20130121.jar
+27:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-plus-9.2.3.v20140905.jar
+28:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-webapp-9.2.3.v20140905.jar
+29:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-annotations-9.2.3.v20140905.jar
+30:                      4.1 | ${jetty.home}/lib/annotations/asm-4.1.jar
+31:                      4.1 | ${jetty.home}/lib/annotations/asm-commons-4.1.jar
+32:                      1.2 | ${jetty.home}/lib/annotations/javax.annotation-api-1.2.jar
+33:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-deploy-9.2.3.v20140905.jar
+34:                      1.0 | ${jetty.home}/lib/websocket/javax.websocket-api-1.0.jar
+35:               9.2.3.v20140905 | ${jetty.home}/lib/websocket/javax-websocket-client-impl-9.2.3.v20140905.jar
+36:               9.2.3.v20140905 | ${jetty.home}/lib/websocket/javax-websocket-server-impl-9.2.3.v20140905.jar
+37:               9.2.3.v20140905 | ${jetty.home}/lib/websocket/websocket-api-9.2.3.v20140905.jar
+38:               9.2.3.v20140905 | ${jetty.home}/lib/websocket/websocket-client-9.2.3.v20140905.jar
+39:               9.2.3.v20140905 | ${jetty.home}/lib/websocket/websocket-common-9.2.3.v20140905.jar
+40:               9.2.3.v20140905 | ${jetty.home}/lib/websocket/websocket-server-9.2.3.v20140905.jar
+41:               9.2.3.v20140905 | ${jetty.home}/lib/websocket/websocket-servlet-9.2.3.v20140905.jar
+
+Jetty Active XMLs:
+------------------
+ ${jetty.home}/etc/jetty.xml
+ ${jetty.home}/etc/jetty-http.xml
+ ${jetty.home}/etc/jetty-jaas.xml
+ ${jetty.home}/etc/jetty-rewrite.xml
+ ${jetty.home}/etc/jetty-ssl.xml
+ ${jetty.home}/etc/jetty-https.xml
+ ${jetty.home}/etc/jetty-plus.xml
+ ${jetty.home}/etc/jetty-annotations.xml
+ ${jetty.home}/etc/jetty-deploy.xml
+ ${jetty.base}/etc/demo-rewrite-rules.xml
+ ${jetty.base}/etc/test-realm.xml
+</pre>
+			</div>
+			<p>
+				这个演示了强大的 <code class="literal">--list-config</code> 命令行选项,你如何使用它看下配置看上去是什么样的当启动 Jetty 的时候.
+				从 Java 环境,到系统属性,classpath,最后是激活的 Jetty IoC XML 用来构建你的 Jetty 服务器的配置.
+			</p>
+			<p>
+				注意,输出很清晰表明配置元素来自什么地方,是 <code class="literal">${jetty.home}</code> 或 <code class="literal">${jetty.base}</code>.
+			</p>
+			<p>
+				如果你看下 ${jetty.base}/start.ini,你就爱那个看到某些如下的内容.
+			</p>
+			<div class="screenexample">
+				<pre class="screen">[my-base]$ cat start.ini
+# Enable security via jaas, and configure it
+--module=jaas
+jaas.login.conf=etc/login.conf
+
+# Enable rewrite examples
+--module=rewrite
+etc/demo-rewrite-rules.xml
+
+# Websocket chat examples needs websocket enabled
+# Don't start for all contexts (set to true in test.xml context)
+org.eclipse.jetty.websocket.jsr356=false
+--module=websocket
+
+# Create and configure the test realm
+etc/test-realm.xml
+demo.realm=etc/realm.properties
+
+# Initialize module server
+--module=server
+threads.min=10
+threads.max=200
+threads.timeout=60000
+jetty.dump.start=false
+jetty.dump.stop=false
+
+--module=deploy
+--module=jsp
+--module=ext
+--module=resources
+--module=client
+--module=annotations
+</pre>
+			</div>
+			<p>
+				${jetty.base}/start.ini 是 Jetty 的主要启动配置的入口点.在这个例子中,你将看到我们正在为 Jetty 启用一些模块,指定某些属性,
+				也引用了某些 Jetty IoC XML 文件(也就是 <code class="filename">etc/demo-rewrite-rules.xml</code> 和 <code class="filename">etc/test-realm.xml</code> 文件).
+			</p>
+			<p>
+				当 Jetty 的 <code class="filename">start.jar</code> 解析 start.ini 中的条目,它将遵循 
+				<a class="link"
+					href="startup-base-and-home.html#base-vs-home-resolution" title="Configuration Resolution Rules">上面的解析规则</a>.
+			</p>
+			<p>
+				比如,<code class="filename">etc/demo-rewrite-rules.xml</code> 的引用被发现在 <code class="filename">${jetty.base}/etc/demo-rewrite-rules.xml</code>. 
+			</p>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="d0e8202"></a>声明 Jetty Base
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>Jetty 分发包的 start.jar 是管理这种分离星期的组件.</p>
+			<p>
+				Jetty start.jar 和 XML 文件总是假定 <code class="filename">${jetty.home}</code> 和 <code class="filename">${jetty.base}</code> 
+				是定义的,当启动 Jetty 的时候.
+			</p>
+			<p>
+				你可以选择手动定义 <code class="filename">${jetty.home}</code> 和 <code class="filename">${jetty.base}</code> 目录,比如这样:
+			</p>
+			<div class="screenexample">
+				<pre class="screen">[jetty-distribution-9.2.3.v20140905]$ pwd
+/home/user/jetty-distribution-9.2.3.v20140905
+[jetty-distribution-9.2.3.v20140905]$ java -jar start.jar \
+    jetty.home=/home/user/jetty-distribution-9.2.3.v20140905 \
+    jetty.base=/home/user/my-base
+2013-10-16 09:08:47.802:INFO:oejs.Server:main: jetty-9.2.3.v20140905
+2013-10-16 09:08:47.817:INFO:oejdp.ScanningAppProvider:main: Deployment monitor [file:/home/user/my-base/webapps/] at interval 1
+...
+</pre>
+			</div>
+			<p>或你可以声明一个目录,然后让另一个被发现.</p>
+			<p>
+				下面的示例使用默认发现的 <code class="filename">${jetty.home}</code>,也就是使用通过 start.jar 自身所在的父目录作为 <code class="filename">${jetty.home}</code>,
+				并手工声明了 <code class="filename">${jetty.base}</code>.
+			</p>
+			<div class="screenexample">
+				<pre class="screen">[jetty-distribution-9.2.3.v20140905]$ pwd
+/home/user/jetty-distribution-9.2.3.v20140905
+[jetty-distribution-9.2.3.v20140905]$ java -jar start.jar jetty.base=/home/user/my-base
+2013-10-16 09:08:47.802:INFO:oejs.Server:main: jetty-9.2.3.v20140905
+2013-10-16 09:08:47.817:INFO:oejdp.ScanningAppProvider:main: Deployment monitor [file:/home/user/my-base/webapps/] at interval 1
+...
+</pre>
+			</div>
+			<p>
+				但是 Jetty 推荐你总是在你的 ${jetty.base} 目录中启动 Jetty,然后通过远程引用 start.jar 启动 Jetty.
+			</p>
+			<p>
+				下面演示了这个,通过允许定位 <code class="filename">start.jar</code> 而使用默认发现到的 <code class="filename">${jetty.home}</code>,
+				并使用 <code class="literal">user.dir</code> 系统属性作为 <code class="filename">${jetty.base}</code>.
+			</p>
+			<div class="screenexample">
+				<pre class="screen">[jetty-distribution-9.2.3.v20140905]$ pwd
+/home/user/jetty-distribution-9.2.3.v20140905
+[jetty-distribution-9.2.3.v20140905]$ cd /home/user/my-base
+[my-base]$ java -jar /home/user/jetty-distribution-9.2.3.v20140905/start.jar
+2013-10-16 09:08:47.802:INFO:oejs.Server:main: jetty-9.2.3.v20140905
+2013-10-16 09:08:47.817:INFO:oejdp.ScanningAppProvider:main: Deployment monitor [file:/home/user/my-base/webapps/] at interval 1
+...
+</pre>
+			</div>
+			<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+				xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+				xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+				xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="important"
+				style="margin-left: 0.5in; margin-right: 0.5in;">
+				<h3 class="title">
+					<i class="icon-plus-sign-alt"></i> 重要
+				</h3>
+				<p>
+					注意 <code class="literal">user.dir</code> 系统属性,它只能在JVM启动时被安全设置,许多第三方的库(特别是日志)使用这个系统属性.
+				</p>
+				<p>
+					强烈推荐你位于这个目录,也就是你期望的 <code class="filename">${jetty.base}</code> 
+					当启动 Jetty 的时候和 <code class="literal">user.dir</code> 的系统属性有一致的行为.
+					(It is strongly recommended that you sit in the directory that is your desired
+					<code class="filename">${jetty.base}</code>
+					when starting Jetty to have consistent behavior and use of the
+					<code class="literal">user.dir</code>
+					system property.)	
+				</p>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="startup-modules.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="startup.html"><i class="icon-chevron-up"></i> Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="start-jar.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Managing Startup Modules&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Using start.jar</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-10-21T11:19:24+08:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

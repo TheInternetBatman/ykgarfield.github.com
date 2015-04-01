@@ -1,0 +1,375 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>临时目录</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="configuring-contexts.html" title="Chapter&nbsp;5.&nbsp;Configuring Contexts">
+<link rel="prev" href="configuring-virtual-hosts.html" title="Configuring Virtual Hosts">
+<link rel="next" href="serving-webapp-from-particular-port.html"
+	title="Serving a WebApp from a Particular Port/Connector">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">临时目录</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="configuring-virtual-hosts.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<th width="60%" align="center">第5章 &nbsp; 配置 Contexts<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="serving-webapp-from-particular-port.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="section">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both">
+						<a name="ref-temporary-directories"></a>临时目录
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<dl>
+				<dt>
+					<span class="section"><a href="ref-temporary-directories.html#d0e3721">默认的临时目录</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="ref-temporary-directories.html#d0e3781">设置一个特定的临时目录</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="ref-temporary-directories.html#d0e3824">"work" 目录</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="ref-temporary-directories.html#d0e3831">持久化临时目录</a></span>
+				</dt>
+			</dl>
+		</div>
+		<p>
+			Jetty 自身没有临时目录,但是你可以为每一个 web 应用程序分配一个目录,WAR 在此解压,运行过程中被编译的 JSPs, 等.如果你没有指定一个特定的临时目录,
+			Jetty 将按需创建一个当你的 web 应用程序启动的时候.无论你设置了临时目录的位置-或你让 Jetty 为你创建-你也可以有机会保持或删除临时目录当 web 应用程序停止的时候.
+		</p>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="d0e3721"></a>默认的临时目录
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				默认情况下,Jetty 将为每一个 web 应用程序创建一个临时目录.目录的名称是以下是格式:
+			</p>
+			<div class="screenexample">
+				<pre class="screen">"jetty-"+host+"-"+port+"-"+resourceBase+"-_"+context+"-"+virtualhost+"-"+randomdigits+".dir"</pre>
+			</div>
+			<p>比如:</p>
+			<div class="screenexample">
+				<pre class="screen">jetty-0.0.0.0-8080-test.war-_test-any-8900275691885214790.dir</pre>
+			</div>
+			<p>
+				<code class="code">0.0.0.0</code>
+				为主机地址,
+				<code class="code">8080</code>
+				是端口,
+				<code class="code">test.war</code>
+				是 resourceBase,
+				<code class="code">test</code>
+				是 context path (/ 转换为 to _),
+				<code class="code">any</code>
+				是虚拟主机,
+				<code class="code">randomdigits</code>
+				是保证唯一的数字字符串.
+			</p>
+			<p>
+				一旦临时目录 被创建,它将作为  context 属性
+				<code class="code">javax.servlet.context.tempdir</code> 的值,可以被取回.
+			</p>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="d0e3756"></a>临时目录的位置
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>
+					默认情况下,jetty 将在 <code class="code">java.io.tmpdir</code> 系统属性的目录中创建这个目录.
+					你可以通过设置 context 属性 <code class="code">org.eclipse.jetty.webapp.basetempdir</code> 为期望的父目录的名称指示 Jetty 使用一个不同的父目录.
+					通过这些属性命名的目录 <span class="emphasis"><em>必须</em></span> 存在并且是 <span class="emphasis"><em>可写的(writeable)</em></span>.
+				</p>
+				<p>
+					像往常使用 Jetty 一样,你可以在一个 context xml 文件中设置这个属性,或者在代码中也可以这么做.
+					这里是在一个 xml 文件中设置的实例:
+				</p>
+				<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+
+  <Set name="contextPath">/test</Set>
+  <Set name="war">foo.war</Set>
+
+  <Call name="setAttribute">
+    <Arg>org.eclipse.jetty.webapp.basetempdir</Arg>
+    <Arg>/home/my/foo</Arg>
+  </Call>
+</Configure>
+]]>
+        </script>
+				<p>等同的代码是:</p>
+				<script type="syntaxhighlighter" class="brush: java;toolbar: false">
+          <![CDATA[WebAppContext context = new WebAppContext();
+context.setContextPath("/test");
+context.setWar("foo.war");
+context.setAttribute("org.eclipse.jetty.webapp.basetempdir", "/tmp/foo");]]>
+        </script>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="d0e3781"></a>设置一个特定的临时目录
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>为了使用一个特定的目录作为临时目录,你可以:</p>
+			<div class="variablelist">
+				<dl>
+					<dt>
+						<span class="term">调用  WebAppContext.setTempDirectory(String dir)</span>
+					</dt>
+					<dd>
+						<p>像往常使用 Jetty 一样,你可以在一个 xml 文件或直接在代码中完成.这里是一个在 xml 中设置临时目录的示例:</p>
+						<p>
+							<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+
+  <Set name="contextPath">/test</Set>
+  <Set name="war">foo.war</Set>
+
+  <Set name="tempDirectory">/some/dir/foo</Set>
+</Configure>]]>
+        </script>
+        					这里是一个在 java 代码中的示例:
+						</p>
+						<script type="syntaxhighlighter" class="brush: java;toolbar: false">
+          <![CDATA[WebAppContext context = new WebAppContext();
+context.setContextPath("/test");
+context.setWar("foo.war");
+context.setTempDirectory(new File("/some/dir/foo"));]]>
+        </script>
+					</dd>
+					<dt>
+						<span class="term">设置 <code class="filename">javax.servlet.context.tempdir</code> context 属性
+						</span>
+					</dt>
+					<dd>
+						<p>
+							你应该使用你想用来作为临时目录的目录名称设置这个属性.再次声明,你也可以在 xml 中完成:
+						</p>
+						<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+
+  <Set name="contextPath">/test</Set>
+  <Set name="war">foo.war</Set>
+
+  <Call name="setAttribute">
+    <Arg>javax.servlet.context.tempdir</Arg>
+    <Arg>/some/dir/foo</Arg>
+  </Call>
+  
+</Configure>]]>
+        </script>
+						<p>或者在 java 中:</p>
+						<script type="syntaxhighlighter" class="brush: java;toolbar: false">
+          <![CDATA[WebAppContext context = new WebAppContext();
+context.setContextPath("/test");
+context.setWar("foo.war");
+context.setAttribute("javax.servlet.context.tempdir", "/some/dir/foo");]]>
+        </script>
+					</dd>
+				</dl>
+			</div>
+			<p>
+				一旦一个临时目录通过这些方法被创建,一个 File 实例被设置作为 web 应用程序 <code class="code">javax.servlet.context.tempdir</code> 属性的值.
+			</p>
+			<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+				xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+				xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+				xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note"
+				style="margin-left: 0.5in; margin-right: 0.5in;">
+				<h3 class="title">
+					<i class="icon-asterisk"></i> 注意
+				</h3>
+				<p>
+					注意设置一个明确的临时目录,如果你很可能在重新部署之间修改了 WEB-INF/lib 中的 jars.
+					有一个 JVM bug 涉及 jar 内容的缓存:
+					<a class="link"
+						href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4774421" target="_top">http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4774421</a>
+				</p>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="d0e3824"></a>"work" 目录
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+			主要是为了向后兼容,从 jetty-9.1.1 开始,可以在 ${jetty.base} 目录创建一个 "work" 目录.如果这样的一个目录被找到,
+			它将被假定为你想使用它作为在那个 ${jetty.base} 中所有 webapps 的临时目录.此外,作为历来的情况,这些位于 work 目录的临时目录不会被清理
+			当 jetty 存在的时候(更准确的来说,一个 context 对应的临时目录不会被清理当 context 停止的时候).
+			</p>
+			<p>
+				当一个 work 目录被使用,特定 context 临时目录名称生成的算法将忽略随机数字字符串.这个保证了目录的名称在 context 重启的时候保持一致.
+			</p>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="d0e3831"></a>持久化临时目录
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				有时候你可能发现在 web 应用程序重启之间保持临时目录的内容是非常有用的.默认情况下,Jetty 将 <span class="emphasis"><em>不会</em></span>
+				持久化临时目录.为了让 Jetty 可以保持它,使用 
+				<a class="link"
+					href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/WebAppContext.html" target="_top">WebAppContext.setPersistTempDirectory(true)</a>.
+			</p>
+			<p>
+				注意如果你调用 setPersistTempDirectory(true),但是让 Jetty 每次创建一个新的临时目录(也就是,你没有设置一个明确的临时目录),
+				这样将在你选择的临时目录位置累积临时目录.
+			</p>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="configuring-virtual-hosts.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="configuring-contexts.html"><i class="icon-chevron-up"></i>
+						Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="serving-webapp-from-particular-port.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Configuring Virtual Hosts&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Serving a WebApp from a Particular Port/Connector</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-10-21T11:19:23+08:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

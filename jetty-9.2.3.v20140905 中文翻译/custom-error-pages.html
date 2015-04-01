@@ -1,0 +1,399 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>创建自定义的错误页面</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="configuring-contexts.html" title="Chapter&nbsp;5.&nbsp;Configuring Contexts">
+<link rel="prev" href="serving-webapp-from-particular-port.html"
+	title="Serving a WebApp from a Particular Port/Connector">
+<link rel="next" href="setting-form-size.html" title="Setting Max Form Size">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">创建自定义的错误页面</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="serving-webapp-from-particular-port.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<th width="60%" align="center">第5章 &nbsp; 配置 Contexts<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="setting-form-size.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="section">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both">
+						<a name="custom-error-pages"></a>创建自定义的错误页面
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<dl>
+				<dt>
+					<span class="section"><a href="custom-error-pages.html#d0e3900">在 web.xml 中定义错误页面</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="custom-error-pages.html#d0e3967">配置错误页面 context 文件</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="custom-error-pages.html#d0e3981">创建 ErrorHandler 类</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="custom-error-pages.html#d0e3998">Server 基本的 404 错误</a></span>
+				</dt>
+			</dl>
+		</div>
+		<p>下面的几个小节描述了在 Jetty 中创建自定义错误页面的几种方式.</p>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="d0e3900"></a>在 web.xml 中定义错误页面
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				你可以使用位于 <code class="filename">webapp/WEB-INF/web.xml</code> 的标准配置文件使用 error-page 元素来映射错误到特定的 URLs.
+				这个元素创建 error-code 或  exception-type 到 web 应用程序的资源位置之间的映射. 
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>error-code - 一个整数值</p></li>
+					<li class="listitem"><p>exception-type - Java 异常类型的全限定类名</p></li>
+					<li class="listitem"><p>location - 相对于 web 应用程序根目录的资源位置.值应该以 "/" 开头.</p></li> 
+				</ul>
+			</div>
+			<p>Error code 示例:</p>
+			<div class="informalexample">
+				<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[
+<error-page>
+  <error-code>404</error-code>
+  <location>/jspsnoop/ERROR/404</location>
+</error-page>      
+      ]]>
+        </script>
+			</div>
+			<p>Exception 示例:</p>
+			<div class="informalexample">
+				<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[
+<error-page>
+  <exception-type>java.io.IOException</exception-type>
+  <location>/jspsnoop/IOException</location>
+</error-page>      
+      ]]>
+        </script>
+			</div>
+			<p>
+				使用 error-page 元素创建的错误页面映射将重定向到 web 应用程序中的一个普通的 URL,然后将被当做对那个位置的普通请求,因此可以是静态内容,
+				一个 JSP 或一个 filter 和/或 servlet.当处理一个错误重定向生成的请求的时候,下面的请求属性可以被设置,并且对于生成动态内容可用:
+			</p>
+			<div class="variablelist">
+				<dl>
+					<dt>
+						<span class="term">javax.servlet.error.exception</span>
+					</dt>
+					<dd>
+						<p>引起错误的异常实例(或 null)</p>
+					</dd>
+					<dt>
+						<span class="term">javax.servlet.error.exception_type</span>
+					</dt>
+					<dd>
+						<p>引起错误(或 null) 的异常实例的类名称</p>
+					</dd>
+					<dt>
+						<span class="term">javax.servlet.error.message</span>
+					</dt>
+					<dd>
+						<p>错误信息.</p>
+					</dd>
+					<dt>
+						<span class="term">javax.servlet.error.request_uri</span>
+					</dt>
+					<dd>
+						<p>错误请求的 URI.</p>
+					</dd>
+					<dt>
+						<span class="term">javax.servlet.error.servlet_name</span>
+					</dt>
+					<dd>
+						<p>错误请求被派发到 / 的 servlet 的名称</p>
+					</dd>
+					<dt>
+						<span class="term">javax.servlet.error.status_code</span>
+					</dt>
+					<dd>
+						<p>错误的状态码(比如, 404, 500 等)</p>
+					</dd>
+				</dl>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="d0e3967"></a>配置错误页面 context 文件
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				你可以使用 context IoC XML 文件配置默认错误页面映射,这将会比 <code class="code">web.xml</code> 更具灵活性,
+				特别是支持错误代码范围.Context 文件通常位于 <code class="filename">${jetty.home}/webapps/</code>
+				(见 DeployerManager 查看更多细节),如下是一个更加灵活错误页面映射的示例:
+			</p>
+			<div class="informalexample">
+				<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.eclipse.org/configure.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/test</Set>
+  <Set name="war">
+    <SystemProperty name="jetty.home" default="."/>/webapps/test
+  </Set>
+
+  <!-- by Code -->
+  <Get name="errorHandler">
+    <Call name="addErrorPage">
+      <Arg type="int">404</Arg>
+      <Arg type="String">/jspsnoop/ERROR/404</Arg>
+    </Call>
+  </Get>
+
+  <!-- by Exception -->
+  <Get name="errorHandler">
+    <Call name="addErrorPage">
+      <Arg>
+        <Call class="java.lang.Class" name="forName">
+          <Arg type="String">java.io.IOException</Arg>
+        </Call>
+      </Arg>
+      <Arg type="String">/jspsnoop/IOException</Arg>
+    </Call>
+  </Get>
+
+  <!-- by Code Range -->
+  <Get name="errorHandler">
+    <Call name="addErrorPage">
+      <Arg type="int">500</Arg>
+      <Arg type="int">599</Arg>
+      <Arg type="String">/dump/errorCodeRangeMapping</Arg>
+    </Call>
+  </Get>
+</Configure>  
+      ]]>
+        </script>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="d0e3981"></a>自定义 ErrorHandler 类
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				如果没有错误页面映射被定义,或者如果错误页面资源本身有一个错误,这样错误页面将由 Context 或 Server 配置的 ErrorHandler 的一个实例生成.
+				一个 ErrorHandler 可以继承 ErrorHandler 类,并且可以完全替换 handle 方法去生成一个错误页面,或者它可以实现下面方法中的部分或全部来
+				部分修改错误页面:
+			</p>
+			<div class="informalexample">
+				<script type="syntaxhighlighter" class="brush: java;toolbar: false">
+          <![CDATA[
+void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException
+void handleErrorPage(HttpServletRequest request, Writer writer, int code, String message) throws IOException
+void writeErrorPage(HttpServletRequest request, Writer writer, int code, String message, boolean showStacks) throws IOException
+void writeErrorPageHead(HttpServletRequest request, Writer writer, int code, String message) throws IOException
+void writeErrorPageBody(HttpServletRequest request, Writer writer, int code, String message, boolean showStacks) throws IOException
+void writeErrorPageMessage(HttpServletRequest request, Writer writer, int code, String message, String uri) throws IOException
+void writeErrorPageStacks(HttpServletRequest request, Writer writer) throws IOException      
+      ]]>
+        </script>
+			</div>
+			<p>
+				一个 ErrorHandler 实例可以被设置到一个 Context 上通过调用 ContextHandler.setErrorHandler 方法.
+				这个可以通过嵌入式的代码或 context IoC XML 完成.比如:
+			</p>
+			<div class="informalexample">
+				<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[
+<Configure class="org.eclipse.jetty.server.handler.ContextHandler">
+  ...
+
+  <Set name="errorHandler">
+    <New class="com.acme.handler.MyErrorHandler"/>
+  </Set>
+  ...
+
+</Configure> 
+      ]]>
+        </script>
+			</div>
+			<p>
+				一个 ErrorHanlder 实例可以被设置到整个 server 上通过设置它为 Server 实例的一个依赖的 bean.这个可以通过嵌入式代码调用 Server.addBean(Object)
+				或者在 jetty.xml IoC XML 文件完成,比如:
+			</p>
+			<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+  ...
+
+  <Call name="addBean">
+    <Arg>
+      <New class="com.acme.handler.MyErrorHandler"/>
+    </Arg>
+  </Call>
+  ...
+
+</Configure>
+    ]]>
+        </script>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="d0e3998"></a>Server 级别的 404 错误
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				你可能会获得一个 'page not found',当一个请求请求超出任何注册的 contexts 的服务器的一个资源的时候.作为一个示例,你有一个域名指向你的公共服务器 IP,
+				然而没有 context 注册到 jetty 中服务那个域名的页面.结果,默认情况下,服务器给出运行于服务器上的所有 contexts 的一个列表.
+			</p>
+			<p>
+				避免这种行为的最快的方式之一是创建一个 webapp 捕获所有的 context(create a catch all context,这句话貌似不全).创建一个 "root" web app 映射到 "/" URI.有一个 index.html 使用 header 指令重定向到任何地方.
+			</p>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="serving-webapp-from-particular-port.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="configuring-contexts.html"><i class="icon-chevron-up"></i>
+						Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="setting-form-size.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Serving a WebApp from a Particular Port/Connector&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Setting Max Form Size</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-10-21T11:19:23+08:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

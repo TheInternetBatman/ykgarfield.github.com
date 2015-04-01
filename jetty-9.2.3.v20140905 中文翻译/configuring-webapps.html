@@ -1,0 +1,661 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>WebAppContexts 部署流程</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="configuring-deployment.html" title="Chapter&nbsp;4.&nbsp;Deploying to Jetty">
+<link rel="prev" href="configuring-specific-webapp-deployment.html"
+	title="Configuring a Specific Web Application Deployment">
+<link rel="next" href="static-content-deployment.html" title="Configuring Static Content Deployment">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">WebAppContexts 部署流程</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="configuring-specific-webapp-deployment.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<th width="60%" align="center">第4章 &nbsp; 部署到 Jetty<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="static-content-deployment.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="section">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both">
+						<a name="configuring-webapps"></a>WebAppContexts 部署流程
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<dl>
+				<dt>
+					<span class="section"><a href="configuring-webapps.html#webapp-configurations">配置类</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="configuring-webapps.html#webapp-context-attributes">其它配置</a></span>
+				</dt>
+			</dl>
+		</div>
+		<p>
+			Web 应用程序需要一系列的处理在它们进入服务之前: 它们可能需要被解压缩,为它们的 jars 创建一个特定的 classloader, web.xml 和 web-fragment.xml 描述符被处理,
+			扫描带有注解的类.因为 web 应用程序已经变得越来越复杂,我们已经增加了途径帮助你定制,通过在部署的时候扩大或减轻处理量.在这节我们将看下这个处理过程,
+			及你如何进行调整.
+		</p>
+		<p>
+			如果你正在查看如何配置一个特定的 WebAppContext-比如它的 context path,是否应该被解压-那么你可以在 
+			<a class="link"
+				href="configuring-specific-webapp-deployment.html" title="Configuring a Specific Web Application Deployment">配置一个特定的 WebApp Deployment</a> 找到相关内容.
+		</p>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="webapp-configurations"></a>配置类
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				作为一个 webapp 被部署,有一系列的 <a class="link"
+href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/Configuration.html" target="_top">org.eclipse.jetty.webapp.Configuration</a> 类要应用到它,每个执行特定的功能.这些配置的顺序是重要的,因为随后的配置往往建立在已提取的信息或之前配置中的设置.下面是配置的按照顺序排列的默认列表,它们被应用到每个 <a class="link"
+href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/WebAppContext.html" target="_top">org.eclipse.jetty.webapp.WebAppContext</a>:
+			</p>
+			<div class="table">
+				<a name="d0e2349"></a>
+				<p class="title">
+					<b>表 4.1 &nbsp; 默认配置类</b>
+				</p>
+				<div class="table-contents">
+					<table summary="Default Configuration classes" border="1">
+						<colgroup>
+							<col>
+							<col>
+						</colgroup>
+						<tbody>
+							<tr>
+								<td><a class="link"
+									href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/WebInfConfiguration.html"
+									target="_top">org.eclipse.jetty.webapp.WebInfConfiguration</a></td>
+								<td>提取 war, 排序 jars(orders jars) 和定义 classpath</td>
+							</tr>
+							<tr>
+								<td><a class="link"
+									href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/WebXmlConfiguration.html"
+									target="_top">org.eclipse.jetty.webapp.WebXmlConfiguration</a></td>
+								<td>处理 WEB-INF/web.xml 文件</td>
+							</tr>
+							<tr>
+								<td><a class="link"
+									href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/MetaInfConfiguration.html"
+									target="_top">org.eclipse.jetty.webapp.MetaInfConfiguration</a></td>
+								<td>在容器中和 webapp jars 中查找 META-INF/resources 和 META-INF/web-fragment.xml</td>
+							</tr>
+							<tr>
+								<td><a class="link"
+									href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/FragmentConfiguration.html"
+									target="_top">org.eclipse.jetty.webapp.FragmentConfiguration</a></td>
+								<td>处理所有找到的  META-INF/web-fragment.xml 文件</td>
+							</tr>
+							<tr>
+								<td><a class="link"
+									href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/JettyWebXmlConfiguration.html"
+									target="_top">org.eclipse.jetty.webapp.JettyWebXmlConfiguration</a></td>
+								<td>处理 WEB-INF/jetty-web.xml 文件</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<br class="table-break">
+			<p></p>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="d0e2385"></a>配置类剖析
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>一个配置类被调用5次,在 WebAppContext 生命周期的不同阶段:</p>
+				<div class="variablelist">
+					<dl>
+						<dt>
+							<span class="term">preConfigure</span>
+						</dt>
+						<dd>
+							<p>
+								WebAppContext 启动的时候,这个阶段被执行.配置应该找到在后面阶段需要的所有资源.
+							</p>
+						</dd>
+						<dt>
+							<span class="term">configure</span>
+						</dt>
+						<dd>
+							<p>
+								这个阶段类的工作完成了,通常使用 preConfigure 阶段找到的资源.
+							</p>
+						</dd>
+						<dt>
+							<span class="term">postConfigure</span>
+						</dt>
+						<dd>
+							<p>
+								这个阶段允许允许配置清理在前两个阶段已经被创建但不是 WebAppContext 生命周期所需要的所有资源.
+							</p>
+						</dd>
+						<dt>
+							<span class="term">deconfigure</span>
+						</dt>
+						<dd>
+							<p>
+								这个阶段发生在当一个 WebAppContext 正在停止的时候,允许配置撤销它创建的任何资源/元数据.
+								一个 WebAppContext 应该能够明确启动/停止多次而不用占用资源(without resources being held).
+							</p>
+						</dd>
+						<dt>
+							<span class="term">destroy</span>
+						</dt>
+						<dd>
+							<p>
+								这个阶段被调用当一个 WebAppContext 实际从服务中被移除.比如,与它关联的 war 文件从 $JETTY_HOME/webapps 目录中被删除.
+							</p>
+						</dd>
+					</dl>
+				</div>
+				<p>
+					每个阶段在上面列出的配置类中被顺序调用.比如,使用我们配置的配置类作为示例,preConfigure() 将在 WebInfConfiguration,WebXmlConfiguration,
+					MetaInfConfiguration, FragmentConfiguration, 然后 JettyWebXmlConfiguration 上被调用.configure() 阶段循环再次开始,再然后是 
+					postConfigure() 阶段.循环以相反的顺序作用于 deconfigure() 和最终的 destroy() 阶段.
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="d0e2426"></a>通过创建额外的配置扩展容器支持
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>
+					如我们已经看到的,有一组默认的配置支持基础的 webapp 部署.你将注意到我们还没有提到 JavaEE 特性,比如 JNDI, 还有高级的 servlet 规范特性,
+					比如注解.那是因为 Jetty 的哲学允许用户定制容器针对他的需要.如果你不需要哲学类型的特性,你不必付出代价-一个重要的因素,因为这些特性,比如
+					注解需要广泛和耗时的扫描 WEB-INF/lib jars.由于现代的 webapps 有许多这样的 jars, 它可能是重要部署延迟的源头.我们将在 
+					<a class="link" href="configuring-webapps.html#webapp-context-attributes" title="Other Configuration">其它的配置</a>
+					小节中看到 Jetty 提供的其它的有用的 webapp 实用工具用于减少分析 jars 花费的时间.
+				</p>
+				<p>Jetty 利用配置的灵活性使得 JDNI 和 注解是可拔插的.</p>
+				<p>首先,让我们看下配置如何启动 JDNI.</p>
+				<div class="section">
+					<div class="titlepage">
+						<div>
+							<div>
+								<h5 class="title">
+									<a name="jndi-configuration-classes"></a>示例: JNDI 配置
+								</h5>
+							</div>
+						</div>
+					</div>
+					<p>JDNI 在 web 应用程序中查找需要容器连接在容器的环境中定义的资源到那个 web 应用程序.为了这样,我们使用 2 个额外的配置:</p>
+					<div class="table">
+						<a name="d0e2443"></a>
+						<p class="title">
+							<b>表 4.2 &nbsp; JNDI 配置类</b>
+						</p>
+						<div class="table-contents">
+							<table summary="JNDI Configuration classes" border="1">
+								<colgroup>
+									<col>
+									<col>
+								</colgroup>
+								<tbody>
+									<tr>
+										<td><a class="link"
+											href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/plus/webapp/EnvConfiguration.html"
+											target="_top">org.eclipse.jetty.plus.webapp.EnvConfiguration</a></td>
+										<td>应用 WEB-INF/jetty-env.xml 文件, 为 webapp 创建 java:comp/env</td>
+									</tr>
+									<tr>
+										<td><a class="link"
+											href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/plus/webapp/PlusConfiguration.html"
+											target="_top">org.eclipse.jetty.plus.webapp.PlusConfiguration</a></td>
+										<td>处理 WEB-INF/web.xml JDNI 相关的配置,并挂钩(hooks up) 命名条目.</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<br class="table-break">
+					<p>
+						这些配置必须严格按照上面显示的顺序添加,并且应该被插入到紧接着配置列表中的 <a class="link"
+							href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/JettyWebXmlConfiguration.html"
+							target="_top">org.eclipse.jetty.webapp.JettyWebXmlConfiguration</a>
+						类之前.为了完全支持 JNDI,你需要做一些其它的事情,完整的细节你可以在<a class="link"
+							href="jndi.html" title="Chapter&nbsp;11.&nbsp;Configuring JNDI">这里</a>找到.
+					</p>
+				</div>
+				<div class="section">
+					<div class="titlepage">
+						<div>
+							<div>
+								<h5 class="title">
+									<a name="d0e2474"></a>示例: 注解配置
+								</h5>
+							</div>
+						</div>
+					</div>
+					<p>我们只需要一个额外的配置类帮助提供 sevlet 注解扫描:</p>
+					<div class="table">
+						<a name="d0e2479"></a>
+						<p class="title">
+							<b>表 4.3 &nbsp;注解配置类</b>
+						</p>
+						<div class="table-contents">
+							<table summary="Annotation Configuration classes" border="1">
+								<colgroup>
+									<col>
+									<col>
+								</colgroup>
+								<tbody>
+									<tr>
+										<td><a class="link"
+											href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/annotations.AnnotationConfiguration.html"
+											target="_top">org.eclipse.jetty.annotations.AnnotationConfiguration</a></td>
+										<td>扫描容器和 web app jars 查找 @WebServlet, @WebFilter, @WebListener 等</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<br class="table-break">
+					<p>
+						这些配置必须严格按照上面显示的顺序添加,并且应该被插入到紧接着配置列表中的 <a
+							class="link"
+							href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/JettWebXmlConfiguration.html"
+							target="_top">org.eclipse.jetty.webapp.JettyWebXmlConfiguration</a>
+						类之前.为了完全支持 JNDI,你需要做一些其它的事情,完整的细节可以在这里找到.
+					</p>
+				</div>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="d0e2498"></a>如何设置配置列表
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>有许多选项你可以用于如何使得 Jetty 使用不同的配置列表.</p>
+				<div class="section">
+					<div class="titlepage">
+						<div>
+							<div>
+								<h5 class="title">
+									<a name="d0e2503"></a>直接在 WebAppContext 上面设置列表
+								</h5>
+							</div>
+						</div>
+					</div>
+					<p>
+						如果你只有1个 webapp 需要被影响,这个可能是最简单的选项.然而,你将需要一个 context xml 文件代表你的  web app 或者你需要调用等价的代码.
+						让我们看一个示例,我们如何在配置中既添加 JDNI,也添加 注解.
+					</p>
+					<script type="syntaxhighlighter" class="brush: xml;toolbar: false">
+          <![CDATA[<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+
+  <Set name="war"><SystemProperty name="jetty.home" default="."/>/webapps/my-cool-webapp</Set>
+
+  <Set name="configurationClasses">
+    <Array type="java.lang.String">
+      <Item>org.eclipse.jetty.webapp.WebInfConfiguration</Item>
+      <Item>org.eclipse.jetty.webapp.WebXmlConfiguration</Item>
+      <Item>org.eclipse.jetty.webapp.MetaInfConfiguration</Item>
+      <Item>org.eclipse.jetty.webapp.FragmentConfiguration</Item>
+      <Item>org.eclipse.jetty.plus.webapp.EnvConfiguration</Item>
+      <Item>org.eclipse.jetty.plus.webapp.PlusConfiguration</Item>
+      <Item>org.eclipse.jetty.annotations.AnnotationConfiguration</Item>
+      <Item>org.eclipse.jetty.webapp.JettyWebXmlConfiguration</Item>
+    </Array>
+  </Set>
+
+</Configure>]]>
+        </script>
+					<p>当然,你也可以使用这种方式来减少应用到一个特定 WebAppContext 上的配置.</p>
+				</div>
+				<div class="section">
+					<div class="titlepage">
+						<div>
+							<div>
+								<h5 class="title">
+									<a name="d0e2515"></a>通过 Deployer 为所有的 webapps 设置列表
+								</h5>
+							</div>
+						</div>
+					</div>
+					<p>
+						如果你使用 <a class="link" href="deployment-architecture.html" title="Deployment Architecture">deployer</a>,
+						你可以在 <a class="link"
+							href="deployment-architecture.html#default-web-app-provider" title="Understanding the Default WebAppProvider">WebAppProvider</a>
+						上设置配置类列表.
+						它们将应用到被 deployer 部署的每个 WebAppContext.
+					</p>
+					<script type="syntaxhighlighter" class="brush: xml;toolbar: false">
+          <![CDATA[<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+
+  <Call name="addBean">
+    <Arg>
+      <New id="DeploymentManager" class="org.eclipse.jetty.deploy.DeploymentManager">
+        <Set name="contexts">
+          <Ref refid="Contexts" />
+        </Set>
+        <Call id="webappprovider" name="addAppProvider">
+          <Arg>
+            <New class="org.eclipse.jetty.deploy.providers.WebAppProvider">
+              <Set name="monitoredDirName"><Property name="jetty.home" default="." />/webapps</Set>
+              <Set name="configurationClasses">
+                <Array type="java.lang.String">
+                  <Item>org.eclipse.jetty.webapp.WebInfConfiguration</Item>
+                  <Item>org.eclipse.jetty.webapp.WebXmlConfiguration</Item>
+                  <Item>org.eclipse.jetty.webapp.MetaInfConfiguration</Item>
+                  <Item>org.eclipse.jetty.webapp.FragmentConfiguration</Item>
+                  <Item>org.eclipse.jetty.plus.webapp.EnvConfiguration</Item>
+                  <Item>org.eclipse.jetty.plus.webapp.PlusConfiguration</Item>
+                  <Item>org.eclipse.jetty.annotations.AnnotationConfiguration</Item>
+                  <Item>org.eclipse.jetty.webapp.JettyWebXmlConfiguration</Item>
+                </Array>
+              </Set>
+            </New>
+          </Arg>
+        </Call>
+      </New>
+    </Arg>
+  </Call>
+</Configure> ]]>
+        </script>
+				</div>
+				<div class="section">
+					<div class="titlepage">
+						<div>
+							<div>
+								<h5 class="title">
+									<a name="d0e2528"></a>添加或插入到一个已存在的列表
+								</h5>
+							</div>
+						</div>
+					</div>
+					<p>
+						为了不用枚举完整的列表,你可以简单地指定你想添加的类,并指出你想它们在列表中出现的位置.让我们看一个示例,使用这种方式在配置中添加 JNDI 的支持-
+						通常你可以在一个 xml 文件中完成或者是等同的代码.则个示例使用了一个 xml 文件,实际上它是来自 Jetty 分发包的 $JETTY_HOME/etc/jetty-plus.xml 文件.
+					</p>
+					<script type="syntaxhighlighter" class="brush: xml;toolbar: false">
+          <![CDATA[<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+
+  <!-- =========================================================== -->
+  <!-- Add plus Configuring classes to all webapps for this Server -->
+  <!-- =========================================================== -->
+  <Call class="org.eclipse.jetty.webapp.Configuration$ClassList" name="setServerDefault">
+    <Arg><Ref refid="Server" /></Arg>
+    <Call name="addAfter">
+      <Arg name="afterClass">org.eclipse.jetty.webapp.FragmentConfiguration</Arg>
+      <Arg>
+        <Array type="String">
+          <Item>org.eclipse.jetty.plus.webapp.EnvConfiguration</Item>
+          <Item>org.eclipse.jetty.plus.webapp.PlusConfiguration</Item>
+        </Array>
+      </Arg>
+    </Call>
+  </Call>
+
+</Configure>
+]]>
+        </script>
+					<p>
+						<a class="link"
+							href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/Configuration.html"
+							target="_top">org.eclipse.jetty.webapp.Configuration.ClassList</a> 类提供了以下方法用于插入
+					</p>
+					<div class="variablelist">
+						<dl>
+							<dt>
+								<span class="term">addAfter</span>
+							</dt>
+							<dd>
+								<p>在给定的配置类名称之后插入提供的配置类名称的列表</p>
+							</dd>
+							<dt>
+								<span class="term">addBefore</span>
+							</dt>
+							<dd>
+								<p>在给定的配置类名称之前插入提供的配置类名称的列表</p>
+							</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="webapp-context-attributes"></a>其它配置
+						</h3>
+					</div>
+				</div>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="container-include-jar-pattern"></a>org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>
+					这是一个 <a class="link" href="quickstart-config-what.html#context_attributes">context attribute</a>,可以设置到 
+					<a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/WebAppContext.html"
+						target="_top"> an org.eclipse.jetty.webapp.WebAppContext</a>
+					来控制容器的哪部分的 classpath 应该被处理,比如注解, META-INF/resources, META-INF/web-fragment.xml 等.
+				</p>
+				<p>
+					通常,没有来自容器的 classpath 被包含用来处理.然而,有时候你将需要.比如,你可能有一些库,在你的 webapps 中共享,因此你需要将它们放到 
+					$JETTY_HOME/lib 目录.这些库包含了注解,因此需要被扫描.
+				</p>
+				<p>
+					这个属性的值是一个正则定义了来自容器的哪些 <span class="emphasis"><em> jars</em></span> 和 <span
+						class="emphasis"><em>class 目录</em></span> 应该被检测到.
+				</p>
+				<p>
+					这里是一个来自 context xml 文件的例子(虽然一如既往,你可以以相同的代码完成),这个将匹配以 "foo-" 或 "bar-" 开头的所有 jar,或者命名为 "classes" 的目录.
+				</p>
+				<script type="syntaxhighlighter" class="brush: xml;toolbar: false">
+          <![CDATA[<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+
+    <Call name="setContextAttribute">
+      <Arg>org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern</Arg>
+      <Arg>.*/foo-[^/]*\.jar$|.*/bar-[^/]*\.jar$|.*/classes/.*</Arg>
+    </Call>
+
+</Configure>]]>
+        </script>
+				<p>注意模式的顺序定义被扫描的 jars 或 class 目录的顺序.</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="web-inf-include-jar-pattern"></a>org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>
+					类似于之前的 <a class="link" href="quickstart-config-what.html#context_attributes">context
+						attribute</a>,
+					这个属性控制了哪些 jars 被处理,比如注解和 META-INF 资源.
+					然而,这些属性控制着来自 <span class="emphasis"><em>webapp 的</em></span> classpath(通常是 WEB-INF/lib) 的哪些 jars 被处理.
+					这个特别有用当 WEB-INF/lib 中有许多jars,但是你知道只有一些需要被扫描.
+				</p>
+				<p>
+					这里是一个模式的例子(在一个 xml 文件中,但是你可以以相同的代码完成),匹配以 "spring-" 开头的所有 jar:
+				</p>
+				<script type="syntaxhighlighter" class="brush: xml;toolbar: false">
+          <![CDATA[<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+
+    <Call name="setContextAttribute">
+      <Arg>org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern</Arg>
+      <Arg>.*/spring-[^/]*\.jar$</Arg>
+    </Call>
+
+</Configure>]]>
+        </script>
+				<p>注意模式的顺序定义了扫描的 jars 的顺序.</p>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="configuring-specific-webapp-deployment.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="configuring-deployment.html"><i
+						class="icon-chevron-up"></i> Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="static-content-deployment.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Configuring a Specific Web Application Deployment&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Configuring Static Content Deployment</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-11-23T01:00:22-08:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

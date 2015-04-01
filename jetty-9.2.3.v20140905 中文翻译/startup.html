@@ -1,0 +1,488 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>第9章 &nbsp; 启动 Jetty</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="administration.html" title="Part&nbsp;III.&nbsp;Jetty Administration Guide">
+<link rel="prev" href="administration.html" title="Part&nbsp;III.&nbsp;Jetty Administration Guide">
+<link rel="next" href="startup-xml-config.html" title="Managing XML Based Startup Configuration">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">第9章 &nbsp; 启动 Jetty</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="administration.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<th width="60%" align="center">Part&nbsp;III.&nbsp;Jetty Administration Guide<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="startup-xml-config.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="chapter">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title">
+						<a name="startup"></a>第9章 &nbsp; 启动 Jetty
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<p>
+				<b>Table of Contents</b>
+			</p>
+			<dl>
+				<dt>
+					<span class="section"><a href="startup.html#startup-overview">启动概览</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="startup-classpath.html">管理服务器 Classpath</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="startup-modules.html">管理启动模块</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="startup-base-and-home.html">管理 Jetty Base 和 Jetty Home</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="start-jar.html">使用 start.jar</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="startup-unix-service.html">使用 jetty.sh 启动 Unix 服务</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="startup-windows-service.html">通过 Windows 服务启动</a></span>
+				</dt>
+			</dl>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h2 class="title" style="clear: both">
+							<a name="startup-overview"></a>启动概览
+						</h2>
+					</div>
+				</div>
+			</div>
+			<div class="toc">
+				<dl>
+					<dt>
+						<span class="section"><a href="startup.html#d0e7597">启动示例</a></span>
+					</dt>
+				</dl>
+			</div>
+			<p>
+				<code class="filename">start.jar</code>
+				引导管理独立的 Jetty 的启动.它负责:
+			</p>
+			<div class="variablelist">
+				<dl>
+					<dt>
+						<span class="term">构建 classpath</span>
+					</dt>
+					<dd>
+						<p>
+							<code class="filename">start.jar</code>
+							引导构建一个 classpath 用于必须的 Jetty 特性和它们的依赖.
+							它使用用于 <code class="filename">start.jar</code> 的 <code class="literal">--lib</code> 选项
+							添加一个独立的 classpath 条目,或使用 <code class="literal">--module</code> 选项
+							包含所有的 libs 和用于一个模块的所有的依赖(一个命名的 Jetty 特性) 来构建 classpath.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">实例化 Server 组件</span>
+					</dt>
+					<dd>
+						<p>
+							服务器和它的组件通过使用 Jetty IoC XML 或使用 spring 来实例化.Jetty 服务器只是用于服务器,connectors, session managers 和其它组件的
+							一组 java POJOs 的集合.它们被实例化,注入,在 XML 文件中被织入到一起,通常每个模块/功能,作为参数被传递到 <code class="filename">start.jar</code>.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">解析 Server 文件系统位置</span>
+					</dt>
+					<dd>
+						<p>
+							<code class="filename">start.jar</code> 机制解析用于 <code class="literal">${jetty.home}</code>
+							和 <code class="literal">${jetty.base}</code> 目录的规范位置.
+						</p>
+						<p>
+							<code class="literal">${jetty.home}</code> 是 Jetty 的标准分发包的位置.
+						</p>
+						<p>
+							<code class="literal">${jetty.base}</code> 目录是本地服务自定义和配置的位置.
+						</p>
+						<p>
+							如果你想修改 Jetty 分发包,base 和 home 可能是相同的目录.分离 base 和 home 目录允许分发包保持不变,使用在 home 目录中所有的自定义 ,
+							因此简化了随后服务器版本的升级.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">参数化服务器配置</span>
+					</dt>
+					<dd>
+						<p>
+							XML 文件主要决定服务器的配置.这些文件大多数被参数化允许简单的注入主机名,端口,密码及更多的东西.
+							<code class="filename">start.jar</code> 允许你在命令行或在属性文件中设置参数.
+						</p>
+					</dd>
+				</dl>
+			</div>
+			<p>
+				为了实现这些启动机制,<code class="filename">start.jar</code> 使用:
+			</p>
+			<div class="variablelist">
+				<dl>
+					<dt>
+						<span class="term">命令行参数</span>
+					</dt>
+					<dd>
+						<p>
+							你可以使用命令行参数指定库、属性和 XML 文件来配置整个服务器.然而实践中,INI 和 modules 机制(如下)减少了命令行的冗长.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">INI 文件</span>
+					</dt>
+					<dd>
+						<p>
+							<code class="filename">start.jar</code> 机制使用了 <code class="filename">${jetty.base}/start.ini</code> 和 
+							<code class="filename">${jetty.base}/start.d/*.ini</code> 文件的机制,每一行等同于一个 <code class="literal">start.jar</code>
+							命令行参数.这意味着一个全局的  <code class="filename">start.ini</code> 文件或者多个 <code class="filename">start.d/feature.ini</code>
+							文件控制了服务器的配置.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">模块(Modules)</span>
+					</dt>
+					<dd>
+						<p>
+							代替明确列出所有的库,属性和 XML 文件用于一个特性,<code class="filename">start.jar</code> 机制允许你创建多个模块.
+							你在 <code class="filename">modules/*.mod</code> 中定义一个模块,包括库,依赖,XML 和模板 INI 文件用于一个 Jetty 特性.
+							因此你可以在命令行选项中使用单个的 <code class="literal">--module=name</code>,因为这个等同于为一个特性指定许多 
+							<code class="literal">--lib=location</code>, feature.xml, name=value 参数和它所有的依赖.
+							模块也可以使用它们的依赖来控制库和 XML 文件的顺序.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">XML Files</span>
+					</dt>
+					<dd>
+						<p>
+							Jetty IoC 或 Spring 格式的 XML 文件实例化实际的服务器的 POJO 组件.
+							这个包含了所有主要的组件,比如 connectors, keystores, session managers, 和数据源.
+							通常每个模块有一个或多个 XML 文件,它们在相应的模块中定义和激活.
+						</p>
+					</dd>
+				</dl>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h3 class="title">
+								<a name="d0e7597"></a>启动示例
+							</h3>
+						</div>
+					</div>
+				</div>
+				<p>
+					启动 Jetty 的最简单的方式是使用下面的 Java 命令行工具通过 <code class="filename">start.jar</code> 机制.				
+				</p>
+				<div class="screenexample">
+					<pre class="screen">[user]$ cd jetty-distribution-9.2.3.v20140905
+[jetty-distribution-9.2.3.v20140905]$ java -jar start.jar --module=http jetty.port=8080</pre>
+				</div>
+				<p>
+					这条命令使用 <code class="filename">start.jar</code> 机制从 <code class="literal">http</code> 
+					获得元数据来引导 classpath,属性,和 XML 文件.指定的 <code class="literal">http</code> 模块定义在 <code class="filename">${jetty.home}/modules/http.mod</code>
+					文件中,包括如下内容:
+				</p>
+				<div class="screenexample">
+					<pre class="screen">[jetty-distribution-9.2.3.v20140905]$ cat modules/http.mod
+[depend]
+server
+
+[xml]
+etc/jetty-http.xml
+
+[ini-template]
+jetty.port=8080
+http.timeout=30000</pre>
+				</div>
+				<p>
+					<code class="literal">http</code> 模块声明了 <code class="literal">http</code> 依赖于 server 模块,
+					使用 <code class="filename">jetty-http.xml</code> 文件,并可以使用 <code class="literal">jetty.port</code> 
+					和 <code class="literal">http.timeout</code> 参数被参数化.
+					INI-template 部分实际上不会被上面的命令使用,所以 <code class="literal">jetty.port</code>
+					必须仍然定义在命令行中.
+				</p>
+				<p>
+					下面是  server 依赖,<code class="filename">${jetty.home}/modules/server.mod</code> 文件包括:
+				</p>
+				<div class="screenexample">
+					<pre class="screen">[jetty-distribution-9.2.3.v20140905]$ cat modules/server.mod
+[lib]
+lib/servlet-api-3.1.jar
+lib/jetty-http-${jetty.version}.jar
+lib/jetty-server-${jetty.version}.jar
+lib/jetty-xml-${jetty.version}.jar
+lib/jetty-util-${jetty.version}.jar
+lib/jetty-io-${jetty.version}.jar
+
+[xml]
+etc/jetty.xml
+
+[ini-template]
+threads.min=10
+threads.max=200
+</pre>
+				</div>
+				<p>
+					<code class="literal">server</code> 声明 server 需要的库,并且使用 <code class="filename">jetty.xml</code> 文件.
+					<code class="literal">http</code> 和 <code class="literal">server</code> 模块的组合的元数据让 
+					<code class="filename">start.jar</code> 生成启动 Jetty 必须的有效 Java 命令行.
+				</p>
+				<p>查看这个的另一种方式是询问 Jetty 它的配置看起来是什么样子的:</p>
+				<div class="screenexample">
+					<pre class="screen">[jetty-distribution-9.2.3.v20140905]$ java -jar start.jar --module=http jetty.port=9099 --list-config
+
+Java Environment:
+-----------------
+ java.home=/user/lib/jvm/jdk-7u21-x64/jre
+ java.vm.vendor=Oracle Corporation
+ java.vm.version=23.25-b01
+ java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+ java.vm.info=mixed mode
+ java.runtime.name=Java(TM) SE Runtime Environment
+ java.runtime.version=1.7.0_25-b15
+ java.io.tmpdir=/tmp
+
+Jetty Environment:
+-----------------
+ jetty.home=/opt/jetty/jetty-distribution-9.2.3.v20140905
+ jetty.base=/opt/jetty/jetty-distribution-9.2.3.v20140905
+ jetty.version=9.2.3.v20140905
+
+JVM Arguments:
+--------------
+ (no jvm args specified)
+
+System Properties:
+------------------
+ jetty.home = /opt/jetty/jetty-distribution-9.2.3.v20140905
+ jetty.base = /opt/jetty/jetty-distribution-9.2.3.v20140905
+
+Properties:
+-----------
+ jetty.port = 9099
+
+Jetty Server Classpath:
+-----------------------
+Version Information on 7 entries in the classpath.
+Note: order presented here is how they would appear on the classpath.
+      changes to the --module=name command line options will be reflected here.
+ 0:                    3.1.0 | ${jetty.home}/lib/servlet-api-3.1.jar
+ 1:                  3.1.RC0 | ${jetty.home}/lib/jetty-schemas-3.1.jar
+ 2:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-http-9.2.3.v20140905.jar
+ 3:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-server-9.2.3.v20140905.jar
+ 4:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-xml-9.2.3.v20140905.jar
+ 5:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-util-9.2.3.v20140905.jar
+ 6:               9.2.3.v20140905 | ${jetty.home}/lib/jetty-io-9.2.3.v20140905.jar
+
+Jetty Active XMLs:
+------------------
+ ${jetty.home}/etc/jetty.xml
+ ${jetty.home}/etc/jetty-http.xml
+</pre>
+				</div>
+				<p>这个表示用来启动 Jetty 而应用的全部配置.</p>
+				<p>
+					如果你不想使用 <code class="filename">start.jar</code> 引导,你可以通过传统的 Java 命令行启动 Jetty.
+				</p>
+				<p>
+					The following is the equivalent
+					<code class="filename">java</code>
+					command line for what the
+					<code class="filename">start.jar</code>
+					bootstrap above performs.
+				</p>
+				<div class="screenexample">
+					<pre class="screen">[user]$ cd jetty-distribution-9.2.3.v20140905
+[jetty-distribution-9.2.3.v20140905]$ echo jetty.port=8080 &gt; /tmp/jetty.properties
+[jetty-distribution-9.2.3.v20140905]$ export JETTY_HOME=`pwd`
+[jetty-distribution-9.2.3.v20140905]$ export JETTY_BASE=`pwd`
+[jetty-distribution-9.2.3.v20140905]$ export JETTY_VERSION="${project.version}"
+[jetty-distribution-9.2.3.v20140905]$ java -Djetty.home=$JETTY_HOME \
+-Djetty.base=$JETTY_BASE \
+-cp \
+ $JETTY_HOME/lib/servlet-api-3.1.jar\
+:$JETTY_HOME/lib/jetty-schemas-3.1.jar\
+:$JETTY_HOME/lib/jetty-http-$JETTY_VERSION.jar\
+:$JETTY_HOME/lib/jetty-server-$JETTY_VERSION.jar \
+:$JETTY_HOME/lib/jetty-xml-$JETTY_VERSION.jar\
+:$JETTY_HOME/lib/jetty-util-$JETTY_VERSION.jar\
+:$JETTY_HOME/lib/jetty-io-$JETTY_VERSION.jar\
+org.eclipse.jetty.xml.XmlConfiguration \
+/tmp/jetty.properties \
+$JETTY_HOME/etc/jetty.xml \
+$JETTY_HOME/etc/jetty-http.xml
+</pre>
+				</div>
+				<p>
+					java 命令行使用核心的 Jetty jars 和 servlet API 设置 classpath,执行 XmlConfiguration 类,
+					然后传递给它一些定义了 server 的一些 XML 文件和一个定义了 HTTP connector 运行于哪个端口的  
+					<code class="filename">jetty.properties</code> 文件.
+				</p>
+				<p>
+					你可以通过使用下面的命令使用模块定义的 INI 模板去创建一个 <code class="filename">start.ini</code> 来简化服务器的启动.
+				</p>
+				<div class="screenexample">
+					<pre class="screen">[user]$ cd jetty-distribution-9.2.3.v20140905
+[jetty-distribution-9.2.3.v20140905]$ mkdir example-base
+[example-base]$ cd example-base
+[example-base]$ ls -la
+total 8
+drwxrwxr-x  2 user webgroup 4096 Oct  4 11:49 ./
+drwxrwxr-x 12 user webgroup 4096 Oct  4 11:49 ../
+[example-base]$ java -jar ../start.jar --add-to-start=http
+WARNING: http            initialised in ${jetty.base}/start.ini (appended)
+WARNING: http            enabled in     ${jetty.base}/start.ini
+WARNING: server          initialised in ${jetty.base}/start.ini (appended)
+WARNING: server          enabled in     ${jetty.base}/start.ini
+[example-base]$ ls -la
+total 12
+drwxrwxr-x  2 user webgroup 4096 Oct  4 11:55 ./
+drwxrwxr-x 12 user webgroup 4096 Oct  4 11:49 ../
+-rw-rw-r--  1 user webgroup  250 Oct  4 11:55 start.ini
+</pre>
+				</div>
+				<p>
+					一旦完成,你可以编辑 <code class="filename">start.ini</code> 文件来修改任意的参数,
+					并且你可以使用简单的命令来运行服务器:
+				</p>
+				<div class="screenexample">
+					<pre class="screen">[example-base]$ java -jar ../start.jar</pre>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="administration.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="administration.html"><i class="icon-chevron-up"></i>
+						Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="startup-xml-config.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Part&nbsp;III.&nbsp;Jetty Administration Guide&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Managing XML Based Startup Configuration</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-10-21T11:19:24+08:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

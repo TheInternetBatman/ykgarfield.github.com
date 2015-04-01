@@ -1,0 +1,371 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>配置一个特殊的Web应用程序 Deployment</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="configuring-deployment.html" title="Chapter&nbsp;4.&nbsp;Deploying to Jetty">
+<link rel="prev" href="automatic-webapp-deployment.html" title="Automatic Web Application Deployment">
+<link rel="next" href="configuring-webapps.html" title="Deployment Processing of WebAppContexts">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">配置一个特殊的Web应用程序 Deployment</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="automatic-webapp-deployment.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<th width="60%" align="center">第4章 &nbsp; 部署到 Jetty<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="configuring-webapps.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="section">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both">
+						<a name="configuring-specific-webapp-deployment"></a>配置一个特殊的Web应用程序 Deployment
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<dl>
+				<dt>
+					<span class="section"><a href="configuring-specific-webapp-deployment.html#deployable-descriptor-file">Jetty
+							可部署描述符 XML 文件</a></span>
+				</dt>
+			</dl>
+		</div>
+		<p>
+			使用自动化 Web 应用程序部署模型很快并且很容易,但是有时候,你可能需要调整某些部署文件(比如,你想使用一个不是基于文件名称的 context path,
+			或者你想只为这个 web 应用程序定义一个特定的数据库连接池).你可以使用 
+			<a class="xref" href="configuring-specific-webapp-deployment.html#deployable-descriptor-file"
+				title="Jetty Deployable Descriptor XML File">Jetty可部署描述符 XML 文件</a> 
+		</p>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="deployable-descriptor-file"></a>Jetty可部署描述符 XML 文件
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				Jetty 支持通过 XML 文件部署 Web 应用程序,这个将构建一个 
+				<a class="link"
+					href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/handler/ContextHandler.html"
+					target="_top">ContextHandler</a>
+				实例,Jetty 可以部署它.
+			</p>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="using-basic-descriptor-files"></a>使用基本的描述符文件
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>
+					在默认的 Jetty 安装中,Jetty 扫描它的 <code class="filename">$JETTY_HOME/webapps</code> 目录中的 context 部署描述符文件.
+					为了使用一个文件部署一个 web 应用程序,简单地将这个文件放到那个目录.
+				</p>
+				<p>
+					部署描述符文件自身是一个 xml 文件,配置一个 <a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/WebAppContext.html"
+						target="_top"><code class="code">WebAppContext</code></a> 类.
+					对于一个基本的安装,你可能需要设置两个属性:
+				</p>
+				<div class="variablelist">
+					<dl>
+						<dt>
+							<span class="term">war</span>
+						</dt>
+						<dd>
+							<p>web 应用程序文件(或目录)的文件系统路径</p>
+						</dd>
+						<dt>
+							<span class="term">contextPath</span>
+						</dt>
+						<dd>
+							<p>用于 web 应用程序的 context 路径</p>
+						</dd>
+					</dl>
+				</div>
+				<p>
+					比如,这里是一个描述符文件,部署文件 <code class="filename">/opt/myapp/myapp.war</code> 
+					到 context 路径 <code class="filename">/wiki</code>:
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/wiki</Set>
+  <Set name="war">/opt/myapp/myapp.war</Set>
+</Configure>        ]]>
+        </script>
+				</div>
+				<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+					xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+					xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+					xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note"
+					style="margin-left: 0.5in; margin-right: 0.5in;">
+					<h3 class="title">
+						<i class="icon-asterisk"></i> 注意
+					</h3>
+					<p>
+						你可以在你的属性文件中使用 <code class="code">SystemProperty</code> 和 <code class="code">Property</code>.
+						比如,如果你设置系统属性 <code class="code">myapp.home=/opt/myapp</code>,你可以重写之前的例子,如:
+					</p>
+				</div>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/wiki</Set>
+  <Set name="war"><SystemProperty name="myapp.home"/>/myapp.war</Set>
+</Configure>]]>
+        </script>
+				</div>
+				<p>
+					如果你需要修改你的应用程序的 home 路径,你可以简单地修改系统属性.这个非常有用如果你频繁在 app 的多个版本之间切换.
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="configuring-advanced-descriptor-files"></a>配置高级的描述符文件
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>
+					如果你查看 <a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/WebAppContext.html"
+						target="_top"><code class="code">WebAppContext</code></a> class 的文档,
+					你会注意到有许多的属性而不只是上面提到的两个.这里是一些使用你的描述符文件配置高级选项的示例.
+				</p>
+				<p>第一个例子告诉 Jetty 不要解压 WAR 文件档部署它的时候.这个可以帮助弄清楚,开发者不应该对临时的解压的 WAR 对修改,因为这样的修改不会持久化,因此不会在 web 应用程序下一次部署的时候生效.
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/wiki</Set>
+  <Set name="war"><SystemProperty name="myapp.home"/>/myapp.war</Set>
+  <Set name="extractWAR">false</Set>
+</Configure>        ]]>
+        </script>
+				</div>
+				<p>
+					下面一个例子得到 JavaEE Servlet context 的引用,然后在它上面设置初始参数.
+					你也可以使用 
+					<code class="code">setAttribute</code> 
+					方法设置一个 Servlet context 属性.
+					然而,因为用于 web 应用程序的 <code class="filename"> web.xml</code> 在部署描述符之后处理,
+					<code class="filename"> web.xml</code> 值可覆盖部署描述符中的同名的属性.
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/wiki</Set>
+  <Set name="war"><SystemProperty name="myapp.home"/>/myapp.war</Set>
+  <Get name="ServletContext">
+     <Call name="setInitParameter">
+       <Arg>myapp.config</Arg>
+       <Arg><SystemProperty name="myapp.home">/config/app-config.xml</Arg>
+    </Call>
+  </Get>
+</Configure>        ]]>
+        </script>
+				</div>
+				<p>
+					下面的例子设置一个特定的 <code class="filename">web.xml</code> override 描述符.
+					这个描述符在应用程序的 <code class="filename">web.xml</code> 之后被处理,
+					所以它可以覆盖同名的属性.这个特性非常有用如果你想添加参数或额外的 Servlet 映射而不用打开一个 WAR 文件.
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/wiki</Set>
+  <Set name="war"><SystemProperty name="myapp.home"/>/myapp.war</Set>
+  <Set name="overrideDescriptor">/opt/myapp/overlay-web.xml</Set>
+</Configure>        ]]>
+        </script>
+				</div>
+				<p>
+					下面的例子不只是配置了 web 应用程序的 context, 也配置了一个数据库连接池(见我们的应用程序可以使用的 <a
+						class="xref" href="jndi-datasource-examples.html" title="Datasource Examples">数据源示例</a>.
+					如果 <code class="filename"> web.xml</code> 没有包含一个到这个数据源的引用,你可以使用 override 描述符机制(之前的例子),来包含它).
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/wiki</Set>
+  <Set name="war"><SystemProperty name="myapp.home"/>/myapp.war</Set>
+
+  <New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource">
+    <Arg></Arg>
+    <Arg>jdbc/DSTest</Arg>
+    <Arg>
+      <New class="org.apache.commons.dbcp.BasicDataSource">
+        <Set name="driverClassName">org.some.Driver</Set>
+        <Set name="url">jdbc.url</Set>
+        <Set name="username">jdbc.user</Set>
+        <Set name="password">jdbc.pass</Set>
+      </New>
+    </Arg>
+  </New>
+</Configure>]]>
+        </script>
+				</div>
+				<p>
+					还有许多其它的配置,你可以在 <a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/WebAppContext.html"
+						target="_top"><code class="code">WebAppContext</code></a> 上进行修改.
+					WebAppContext 的 <a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/WebAppContext.html"
+						target="_top">javadoc</a> 是一个好的信息来源.同样可以看文档中的 <a
+						class="link" href="troubleshooting.html#troubleshooting-zip-exceptions" title="Troubleshooting Zip Exceptions">avoiding
+						zip文件例外(zip file exceptions)</a> 对 WebAppContext 设置的描述来决定 war 在部署期间是否自动解压缩,或 webapp 的某些部分是否被拷贝到临时目录.
+				</p>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="automatic-webapp-deployment.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="configuring-deployment.html"><i
+						class="icon-chevron-up"></i> Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="configuring-webapps.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Automatic Web Application Deployment&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Deployment Processing of WebAppContexts</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-10-21T11:19:22+08:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

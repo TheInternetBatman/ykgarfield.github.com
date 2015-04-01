@@ -1,0 +1,791 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>在 Jetty 中配置什么</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="quick-start-configure.html" title="Chapter&nbsp;3.&nbsp;Jetty Configuration Introduction">
+<link rel="prev" href="quick-start-configure.html" title="Chapter&nbsp;3.&nbsp;Jetty Configuration Introduction">
+<link rel="next" href="configuring.html" title="Part&nbsp;II.&nbsp;Jetty Configuration">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">在 Jetty 中配置什么</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="quick-start-configure.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<th width="60%" align="center">第3章 &nbsp; Jetty 配置介绍<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="configuring.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="section">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both">
+						<a name="quickstart-config-what"></a>在 Jetty 中配置什么
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<dl>
+				<dt>
+					<span class="section"><a href="quickstart-config-what.html#intro-jetty-configuration-server">配置服务器</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="quickstart-config-what.html#intro-jetty-configuration-connectors">配置 Connectors</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="quickstart-config-what.html#intro-jetty-configuration-contexts">配置 Contexts</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="quickstart-config-what.html#intro-jetty-configuration-webapps">配置 Web 应用程序</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="quickstart-config-what.html#quickstart-config-deployer">Web 应用程序部署</a></span>
+				</dt>
+			</dl>
+		</div>
+		<p>
+			这节给出了之前小结概述的你通常使用的机制进行配置 Jetty 组件的概览.
+			<a class="xref" href="architecture.html#basic-architecture" title="Jetty Architecture">Jetty 架构</a>描述了 Jetty 服务器的结构,
+			这是理解配置的一个好的背景知识,并且这是至关重要的如果你想改变 Jetty 分发包中服务器的默认配置.然而,对大多数场合,配置就是识别正确的配置文件并修改已存在的配置值.
+		</p>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="intro-jetty-configuration-server"></a>配置 Server
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				Server 实例是 Jetty 服务器的中央协调对象;它为其它所有的 Jetty 服务器组件提供了服务和生命周期管理.在标准的 Jetty 分发包中
+				核心的 server 配置在 <code class="filename">etc/jetty.xml</code> 文件中,但是你可以混合其它的 server 配置,这可以包括:
+			</p>
+			<div class="variablelist">
+				<dl>
+					<dt>
+						<span class="term">ThreadPool</span>
+					</dt>
+					<dd>
+						<p>
+							Server 实例提供了一个 ThreadPool 实例, 这是其它的 Jetty 服务器组件使用的默认的 Executor 服务.线程池的最主要的配置就是最大大小和最小大小,
+							配置在 <code class="filename">etc/jetty.xml.</code> 中.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">Handlers</span>
+					</dt>
+					<dd>
+						<p>
+							一个 Jetty 实例可以只有一个 Handler 实例去处理传进来的 HTTP 请求.然而一个 handler 可以是一个 container 或包装其它的 handlers, 
+							形成一棵 handlers 树,处理一个请求通常是这棵树从根到叶的一个分支的 handlers 之间的协作.
+							默认的 handler 树设置在 <code class="filename">etc/jetty.xml</code> 文件中,这是一个 Handler Collection 包含了一个
+							Context Handler Collection 和 Default Handler.
+							Context Handler Collection 通过 context path 来选择下一个 handler, 也是一棵 handler 树,将被部署的 Context Handler 和
+							Web 应用程序 Contexts 添加进来.
+							Default Handler 处理任意的没有被处理的请求,然后生成标准的 404 页面.其它的配置文件可以添加 handlers 到这棵树(比如,
+							<code class="filename">jetty-rewrite.xml</code>,
+							<code class="filename">jetty-requestlog.xml</code>)
+							或配置组件到热部署 handlers 中(比如,
+							<code class="filename">jetty-deploy.xml</code>)
+						</p>
+					</dd>
+					<dt>
+						<span class="term"><a name="server_attributes"></a>Server 属性</span>
+					</dt>
+					<dd>
+						<p>server 持有一个字符串到对象的通用属性的映射(attribute map),这样其它的 Jetty 组件可以用命名的对象与 server 关联,
+如果值对象实现了 LifeCycle 接口,它们随着 server 启动和停止.通常 server 属性持有服务器端的默认值.</p>
+					</dd>
+					<dt>
+						<span class="term">Server 字段</span>
+					</dt>
+					<dd>
+						<p>
+							server 也有一些特定的配置字段,你可以在 <code class="filename"> etc/jetty.xml</code> 中设置用于控制其它事项,如 HTTP 响应中的发送日期和版本.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">Connectors</span>
+					</dt>
+					<dd>
+						<p>
+							server 持有一系列的 connectors,接收连接用于 HTTP,和 Jetty 支持的其它的协议.下一节,
+							<a class="xref"
+								href="quickstart-config-what.html#intro-jetty-configuration-connectors" title="Configuring Connectors">配置
+								Connectors</a> 描述了connectors 自身的配置.对于 server,你可以设置所有的 connectors 的集合或添加/移除独立的 connectors.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">Services</span>
+					</dt>
+					<dd>
+						<p>
+							server 可以持有其它的服务对象,有时作为属性,但是通常作为聚合的 LifeCycle beans.服务的示例是 LoginServices 和 DataSources,
+							你可以在 server 级别配置,然后注入到使用它们的 web 应用程序中.
+						</p>
+					</dd>
+				</dl>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="intro-jetty-configuration-connectors"></a>配置 Connectors
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				一个 Jetty Server Connector 是一个网络端点接收连接用于一个或多个协议,为 Jetty 服务器产生请求和/或消息.在标准的 Jetty server 分发包中,
+				有几个配置文件添加了 connectors 到 server 中用于各种协议和协议的组合:
+				<code class="filename"> jetty-http.xml, jetty-https.xml</code> 
+				和
+				<code class="filename">jetty-spdy.xml</code>.
+				connectors 的配置需求通常是:
+			</p>
+			<div class="variablelist">
+				<dl>
+					<dt>
+						<span class="term">端口</span>
+					</dt>
+					<dd>
+						<p>
+							connector 上的 TCP/IP 端口监听连接,使用 XML 属性元素设定,通过查找 <code class="code">jetty.port</code> 
+							(或 <code class="code">jetty.tls.port</code>) 属性,如果没有找到, 默认为 8080(或 8443 用于 TLS).
+						</p>
+					</dd>
+					<dt>
+						<span class="term">主机</span>
+					</dt>
+					<dd>
+						<p>
+							你可以通过一个主机名称或 IP 地址配置一个主机去标识一个在上面监听的特定的网络接口.
+							如果没有设置,或设置为 0.0.0.0,connector 在所有的接口上监听.
+							XML 属性元素用来从 <code class="code"> jetty.host</code> 中查找 host 值.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">空闲超时</span>
+					</dt>
+					<dd>
+						<p>
+						   以毫秒为单位,一个连接可以在 connector 采取动作关闭连接之前的空闲时间.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">HTTP 配置</span>
+					</dt>
+					<dd>
+						<p>
+							接收 HTTP 语义(包括 HTTP, HTTPS 和 SPDY) 的 Connector 类型使用一个包含了独立于特定的网络协议的常用的 HTTP 配置的 HttpConfiguration 实例进行配置.
+							因为这些值通常为多个 connector 类型共有,标准的 Jetty 服务器分发包在 <code class="filename">jetty.xml</code> 文件中创建了单个的 HttpConfiguration,
+							可以在特定 connector 文件中通过 XML Ref 元素被使用.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">SSL Context Factory</span>
+					</dt>
+					<dd>
+						<p>
+							TLS connector 类型(HTTPS 和 SPDY) 使用服务器密钥存储库(keystore)和信任存储库(truststore)的位置配置一个 SSL Context Factory
+							用于获取服务器认证.
+						</p>
+					</dd>
+				</dl>
+			</div>
+			<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+				xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+				xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+				xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note"
+				style="margin-left: 0.5in; margin-right: 0.5in;">
+				<h3 class="title">
+					<i class="icon-asterisk"></i> 注意
+				</h3>
+				<p>
+					虚拟主机不在 connectors 上配置.你必须使用它们响应的虚拟主机配置独立的 contexts.
+				</p>
+			</div>
+			<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+				xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+				xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+				xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note"
+				style="margin-left: 0.5in; margin-right: 0.5in;">
+				<h3 class="title">
+					<i class="icon-asterisk"></i> 注意
+				</h3>
+				<p>
+					在 Jetty 9 之前,connector 的类型反映在支持的协议(HTTP, HTTPS, AJP, SPDY) 和实现的类型(NIO 或 BIO).从 Jetty 9 开始,
+					只有一个主要的 Connector 类型(ServerConnector), 基于 NIO,使用 Connection Factories 去处理一种或多种协议.
+				</p>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="intro-jetty-configuration-contexts"></a>配置 Contexts
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				一个 Jetty context 是一个 handler,在一个 context path 中聚合其它的 handlers 和关联的资源,大致上等同于标准的 ServletContext API.
+				一个 context 可以包含标准的 Jetty handlers 或一个自定义的应用程序 handler.
+			</p>
+			<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+				xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+				xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+				xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note"
+				style="margin-left: 0.5in; margin-right: 0.5in;">
+				<h3 class="title">
+					<i class="icon-asterisk"></i> 注意
+				</h3>
+				<p>
+					servlet 规范定义了一个 web 应用程序.在 Jetty 中一个标准的 web 应用程序是一个特定的 context.
+					使用标准布局和 <code class="filename">WEB-INF/web.xml</code> 去实例化和配置 classpath,基本资源(resource base) 和 handlers 用于 
+					sessions, security,和 sevlets,加上用于 JSPs 的 servlets 和静态内容.标准 web 应用程序通常需要很少或没有额外的配置,
+					但是你也可以使用技术用于任意的 contexts 去改善或修改标准 web 应用程序的配置.
+				</p>
+			</div>
+			<p> 对于所有的 contexts 都通用的配置值是: </p>
+			<div class="variablelist">
+				<dl>
+					<dt>
+						<span class="term">contextPath</span>
+					</dt>
+					<dd>
+						<p>
+							contextPath 是一个 URL 前缀定义了一个 HTTP 请求被请求到哪个 context.
+							比如,如果一个 context 有一个 context path
+							<code class="filename">/foo</code>,
+							它处理请求到 
+							<code class="filename"> /foo</code>,
+							<code class="filename">/foo/index.html</code>,
+							<code class="filename">/foo/bar/</code>,
+							和 <code class="filename"> /foo/bar/image.png</code>,
+							但是它不处理这样的请求,如
+							<code class="filename">/</code>,
+							<code class="filename"> /other/</code>,
+							或 <code class="filename">/favicon.ico</code>.
+							一个以 / 为 context path 的 context 被称为 root context.
+						</p>
+						<p>
+							context path 可以从 deployer 中被默认设置(使用文件名称作为 context path 的依据);
+							或者在代码中;或者可以通过 Jetty IoC XML 设置,被 deployer 应用或在一个标准的 web app context 的 
+							<code class="filename">WEB-INF/jetty-web.xml</code> 中找到.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">virtualHost</span>
+					</dt>
+					<dd>
+						<p>
+							一个 context 可以可选地有一个或多个虚拟主机设置.不像 host 在 connector 上设置(选择监听的网络接口),
+							一个虚拟主机不设置任何的网络参数.相反,虚拟主机代表了一个分配的别名,通过一个名称服务到 IP 地址,可以有多个别名.
+							为了决定一个请求适用于哪个虚拟主机,HTTP 客户端(浏览器)包含了请求名称用于查找网络地址.一个带有虚拟主机设置的 context 只处理在它们的请求头中有一个匹配的虚拟主机的请求.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">classPath</span>
+					</dt>
+					<dd>
+						<p>
+							一个 context 可以可选有一个 classpath,这样任何在 context 中执行的线程执行一个 handler 有一个使用 classpah 设定的 thread context classloader.
+							一个标准的 web 应用程序有一个通过 <code class="filename">WEB-INF/lib</code> 和 <code class="filename">WEB-INF/classes</code> 目录
+							初始化的 classpath, 并且有关于代理 classloading 到 parent classloader 的额外的规则.
+							所有的 contexts 可以有额外的 classpath 被添加.
+						</p>
+					</dd>
+					<dt>
+						<span class="term"><a name="context_attributes"></a>attributes</span>
+					</dt>
+					<dd>
+						<p>
+							属性是与一个 context 关联的任意的名称对象,频繁用于在一个 web 应用程序和它的 container 之间传递实体.
+							比如,属性 <code class="code"> javax.servlet.context.tempdir</code> 用来传递 File 实例,代表了用于一个 web 应用程序的分配的临时目录.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">resourceBase</span>
+					</dt>
+					<dd>
+						<p>
+							resource base 是一个包含了用于 context 的静态资源的目录(或者是一组目录或 URL).这些可以是准备用来服务的 images 和 HTML 文件,
+							或准备用来被编译的 JSP 源文件.在传统的 web 服务器中这个值通常称为 docroot.
+						</p>
+					</dd>
+				</dl>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="d0e1825"></a>通过 API 进行 Context 配置
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>
+					在一个嵌入式服务器中,那你可以通过直接调用 	<a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/handler/ContextHandler.html"
+						target="_top">ContextHandler</a>
+					API 配置 contexts, 如下的示例:
+						
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[package org.eclipse.jetty.embedded;
+
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
+
+public class OneContext {
+
+    public static void main(String[] args) throws Exception {
+        Server server = new Server(8080);
+        ContextHandler context = new ContextHandler();
+        context.setContextPath("/hello");
+        context.setHandler(new HelloHandler());
+        server.setHandler(context);
+        server.start();
+        server.join();
+    }
+}
+]]>
+        </script>
+				</div>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="d0e1837"></a>通过 IoC XML 进行 Context 配置
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>
+					你也可以完全通过 IoC XML(Jetty 的或 Spring 的)创建和配置一个 context.
+					deployer 查找和热部署 context IoC 描述符,比如下面代码创建了一个 context 服务 Jetty 分发包的 Javadoc:
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0"  encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC 
+    "-//Mort Bay Consulting//DTD Configure//EN" 
+    "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<!--
+  Configure a custom context for serving javadoc as static resources 
+-->
+
+<Configure class="org.eclipse.jetty.server.handler.ContextHandler">
+  <Set name="contextPath">/javadoc</Set>
+  <Set name="resourceBase"><SystemProperty name="jetty.home" default="."/>/javadoc/</Set>
+  <Set name="handler">
+    <New class="org.eclipse.jetty.server.handler.ResourceHandler">
+      <Set name="welcomeFiles">
+        <Array type="String">
+          <Item>index.html</Item>
+        </Array>
+      </Set>
+      <Set name="cacheControl">max-age=3600,public</Set>
+    </New>
+  </Set>
+</Configure>]]>
+        </script>
+				</div>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="intro-jetty-configuration-webapps"></a>配置 Web 应用程序
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				servlet 规范定义了一个 web 应用程序, 当被打包为一个 zip 的时候被称为 WAR 文件(web 应用程序归档).
+				Jetty 即实现了 WAR 文件也实现了解压的 web 应用程序作为一个特定的 context,可以通过配置:
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>一个标准布局设置了 resourceBase(WAR 的根目录) 的位置,从 WEB-INF/lib 找到的 jars 和在 WEB-INF/classes 找到的 classes 初始化 classpath.</p></li>
+					<li class="listitem"><p>
+							标准的 <code class="filename">WEB-INF/web.xml</code> 部署描述符,被解析去定义和配置 init 参数,
+							filters, servlets, listeners, security constraints, welcomes 文件和要注入的资源.
+						</p></li>
+					<li class="listitem"><p>
+							由 Jetty 或在配置中提供的一个默认的 <code class="filename">web.xml</code> 格式的部署描述符配置 JSP servlet 
+							和 default servlet 用于处理静态内容.标准的 <code class="filename">web.xml</code> 可以覆盖默认的 <code class="filename">web.xml</code>.
+						</p></li>
+					<li class="listitem"><p>
+							在 <code class="filename">WEB-INF/lib</code> 中的 classes 上找到的 Annotations 可以声明额外的 filters, servlets 和 listeners.							
+						</p></li>
+					<li class="listitem"><p>
+							在 <code class="filename"> WEB-INF/lib</code> 中的 Jars 中找到的标准的部署描述符 fragements 可以声明额外的 
+							init 参数, filters, servlets, listeners, security constraints, welcomes 文件和要注入的资源.
+						</p></li>
+					<li class="listitem"><p>
+							一个可选的 <code class="filename">WEB-INF/jetty-web.xml</code> 可以包含 Jetty IoC 配置去配置 context 和 handlers 的 Jetty 特定 APIs.
+						</p></li>
+				</ul>
+			</div>
+			<p>
+			    因为这些配置机制包含在了 WAR 文件中(或者一个解压的 web 应用程序),通常一个 web 应用程序包含了许多自己的配置,
+			    要进行部署的 WAR 通常只是将 WAR 文件放到 webapps 目录中,被 
+			    <a class="link"
+					href="quickstart-config-what.html#quickstart-config-deployer" title="Web Application Deployment">jetty deployer</a>
+			    扫描.
+			</p>
+			<p>
+				如果你需要在一个 web 应用程序中配置某些东西,通常通过解压 WAR 文件然后编辑 <code class="filename">web.xml</code> 和其它的配置文件完成.
+				然而,servlet 标准和某些 Jetty 特性允许从 WAR 外部将其它的配置应用到一个 web 应用程序.
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>
+							在 server 中你可以配置数据源和安全域,然后通过隐式或名称匹配注入到一个 web 应用程序中.		
+					</p></li>
+					<li class="listitem"><p>
+							Jetty通过默认的和标准的 web.xml 允许一个或多个 web.xml 格式的 override 部署描述符, 被设置到一个 context 上(通过代码或 IoC XML)来改进配置, .
+						</p></li>
+					<li class="listitem"><p>
+							常用的 Jetty Java API 可以通过代码或 IoC XML 调用用来改进一个 web 应用程序的配置.
+					</p></li>
+				</ul>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="d0e1916"></a>设置 Context Path
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>
+					web 应用程序标准为一个 web 应用程序或一个 WAR 文件提供了无需配置的机制来设置它们自己的 contextPath.
+					默认情况下 deployer 使用约定设置 context path: 如果你部署一个名为 <code class="filename">foobar.WAR</code> 的 WAR 文件,
+					context path 就是 <code class="filename">/foobar</code>;
+					如果你部署一个名为 <code class="filename">ROOT.WAR</code> 的 WAR 文件, context path 是 /.
+					然而,通常需要显式地设置 context path,这样信息(比如,版本号)可以包含在 WAR 的文件名称中.
+					Jetty 允许一个 WAR 文件的 context path 在内部(通过 WAR 自身)或外部(通过 WAR 的 deployer)被设置.
+				</p>
+				<p>
+					为了在 WAR 文件内设置 contextPath,你可以包含 IoC XML 格式的 <code class="filename"> WEB-INF/jetty-web.xml</code> 来设置 context path:
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0"  encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC 
+    "-//Mort Bay Consulting//DTD Configure//EN" 
+    "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+    <Set name="contextPath">/contextpath</Set>
+</Configure>]]>
+        </script>
+				</div>
+				<p>
+					另外,为了在外部配置 classpath 而不需要修改 WAR 自身,而不是使 WAR 文件被 deployer 探测,
+					可以部署一个 IoC XML 文件,既设置 context path,也声明它要应用的 WAR 文件:
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0"  encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC 
+    "-//Mort Bay Consulting//DTD Configure//EN" 
+    "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="war"><SystemProperty name="jetty.home" default="."/>/webapps/test.war</Set>
+  <Set name="contextPath">/test</Set>
+</Configure>        ]]>
+        </script>
+				</div>
+				<p>
+					设置 context path 的示例包含在了 Jetty 分发包的 <code class="filename"> $JETTY_HOME/webapps/test.xml</code>.
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="d0e1948"></a>设置一个认证域(Authentication Realm)
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>
+					对于一个标准的 web 应用程序认证方法和域名称可以在 <code class="filename"> web.xml</code> 部署描述符中使用元素被设置,比如:
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[...
+<login-config>
+  <auth-method>BASIC</auth-method>
+  <realm-name>Test Realm</realm-name>
+</login-config>
+...        ]]>
+        </script>
+				</div>
+				<p>
+					这个例子声明了 BASIC 认证机制将被使用,针对一个名为 "Test Realm" 的域使用证书验证.
+					但是标准不会声明 realm 自身如何实现或配置.在 Jetty 中,有几种 realm 实现(称为 LoginServices),最简单的就是 HashLoginService,
+					可以从一个 Java 属性文件中读取用户名和证书.
+				</p>
+				<p>
+					为了配置一个 HashLoginService 的示例匹配上面配置的 "Test Realm",下面的 
+					<code class="filename">$JETTY_HOME/etc/test-realm.xml</code> IoC XML 文件应该在命令行中传递
+					或在 <code class="filename">start.ini</code> 中设置.
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+    <!-- =========================================================== -->
+    <!-- Configure Authentication Login Service                      -->
+    <!-- Realms may be configured for the entire server here, or     -->
+    <!-- they can be configured for a specific web app in a context  -->
+    <!-- configuration (see $(jetty.home)/webapps/test.xml for an    -->
+    <!-- example).                                                   -->
+    <!-- =========================================================== -->
+    <Call name="addBean">
+      <Arg>
+        <New class="org.eclipse.jetty.security.HashLoginService">
+          <Set name="name">Test Realm</Set>
+          <Set name="config"><Property name="demo.realm" default="etc/realm.properties"/></Set>
+          <Set name="refreshInterval">0</Set>
+        </New>
+      </Arg>
+    </Call>
+
+    <Get class="org.eclipse.jetty.util.log.Log" name="rootLogger">
+      <Call name="warn"><Arg>demo test-realm is deployed. DO NOT USE IN PRODUCTION!</Arg></Call>
+    </Get>
+</Configure>
+]]>
+        </script>
+				</div>
+				<p>
+					这个将创建和配置 LoginService 作为 server 上的一个聚合的 bean.
+					当一个 web 应用程序声明了一个称为 "Test Realm" 的 realm 被部署, server beans 会搜索一个匹配的 Login Service.
+				</p>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="quickstart-config-deployer"></a>Web 应用程序部署
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				Jetty 有能力部署多种格式的 Web 应用程序.这个通过扫描 <code class="filename">${jetty.home}/webapps</code> 目录中要被部署的 contexts 完成.
+			</p>
+			<p>一个 Context 可以是下面的任意一种:</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>
+							一个标准的 WAR 文件.(必须是 <code class="filename">.war</code>").
+						</p></li>
+					<li class="listitem"><p>
+							一个目录包含了一个展开的 WAR 文件(必须包含 <code class="filename">{dir}/WEB-INF/web.xml</code> 文件).
+						</p></li>
+					<li class="listitem"><p>一个目录必须包含静态内容.</p></li>
+					<li class="listitem"><p>
+							一个 
+<a class="xref" href="reference-section.html#jetty-xml-syntax" title="Jetty XML Syntax">Jetty XML 语法</a> 
+的 XML 描述符配置一个 
+<a class="link" href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/handler/ContextHandler.html" 	target="_top">ContextHandler</a> 
+实例(比如 
+<a class="link" href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/WebAppContext.html" target="_top">WebAppContext</a>).
+						</p></li>
+				</ul>
+			</div>
+			<p>
+				WebAppProvider 在目录扫描期间将尝试使用下面的推断避免重复部署,
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>
+							隐藏文件(以 <code class="filename">"."</code> 开始)被忽略.
+						</p></li>
+					<li class="listitem"><p>
+							以 <code class="filename">".d"</code> 结尾的目录将被忽略.
+						</p></li>
+					<li class="listitem"><p>
+							如果一个目录和一个相匹配的 WAR 文件使用相同的基本名(比如:<code class="filename">foo/</code> 和 <code class="filename">foo.war</code>),
+							这样目录被假设为解压后的 WAR,并且只有 WAR 被部署(可以重用解压后的目录).
+						</p></li>
+					<li class="listitem"><p>
+							如果一个目录和一个相匹配的 XML 文件存在(比如 <code class="filename">foo/</code> 和 <code class="filename">foo.xml</code>),
+							目录被假设为解压后 WAR,只有 XML 被部署(可以在它的配置中使用目录)
+						</p></li>
+					<li class="listitem"><p>
+							如果一个 WAR 文件和一个相匹配的 XML 存在(比如 <code class="filename">foo.war</code> 和 <code class="filename">foo.xml</code>),
+							WAR 被假设为被 XML 进行配置,并且只有 XML 被部署.
+						</p></li>
+				</ul>
+			</div>
+			<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+				xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+				xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+				xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note"
+				style="margin-left: 0.5in; margin-right: 0.5in;">
+				<h3 class="title">
+					<i class="icon-asterisk"></i> 注意
+				</h3>
+				<p>
+					在 Jetty 的之前版本中,有一个独立的 ContextDeployer 提供了基于 XML 的部署,不过从 Jetty 9 开始, ContextDeployer 已经不再存在,
+					它的功能被使用新的 <a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/deploy/providers/WebAppProvider.html"
+						target="_top">WebAppProvider</a> 合并了,避免可能的重复部署场景.
+				</p>
+			</div>
+			<p>
+				一个 Context 是 ContextHandler 的一个实例,使用常用的资源聚合了其它的 handlers 用于处理 HTTP 请求(比如 resource base, class loader, 配置属性).
+				一个标准的 web 应用程序是 context 的(称为 WebAppContext) 的一个实例,使用标准布局和 <code class="filename">web.xml</code> 
+				部署描述符配置 context.
+			</p>
+			<p></p>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="quick-start-configure.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="quick-start-configure.html"><i
+						class="icon-chevron-up"></i> Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="configuring.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Chapter&nbsp;3.&nbsp;Jetty Configuration Introduction&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Part&nbsp;II.&nbsp;Jetty Configuration</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-10-21T11:19:22+08:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

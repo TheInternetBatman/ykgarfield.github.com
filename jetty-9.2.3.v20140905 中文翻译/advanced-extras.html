@@ -1,0 +1,362 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>第18章 &nbsp; 提供的 Servlets, Filters, 和 Handlers</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="administration.html" title="Part&nbsp;III.&nbsp;Jetty Administration Guide">
+<link rel="prev" href="configuring-fastcgi.html" title="Configuring Jetty for FastCGI">
+<link rel="next" href="proxy-servlet.html" title="Proxy Servlet">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">第18章 &nbsp; 提供的 Servlets, Filters, 和 Handlers</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="configuring-fastcgi.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<th width="60%" align="center">Part&nbsp;III.&nbsp;Jetty 管理指南<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="proxy-servlet.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="chapter">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title">
+						<a name="advanced-extras"></a>第18章 &nbsp; 提供的 Servlets, Filters, 和 Handlers
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<p>
+				<b>目录</b>
+			</p>
+			<dl>
+				<dt>
+					<span class="section"><a href="advanced-extras.html#default-servlet">Default Servlet</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="proxy-servlet.html">Proxy Servlet</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="balancer-servlet.html">Balancer Servlet</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="cgi-servlet.html">CGI Servlet</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="qos-filter.html">Quality of Service Filter</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="dos-filter.html">Denial of Service Filter</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="gzip-filter.html">Gzip Filter</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="cross-origin-filter.html">Cross Origin Filter</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="resource-handler.html">Resource Handler</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="debug-handler.html">Debug Handler</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="statistics-handler.html">Statistics Handler</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="ipaccess-handler.html">IP Access Handler</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="moved-context-handler.html">Moved Context Handler</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="shutdown-handler.html">Shutdown Handler</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="default-handler.html">Default Handler</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="error-handler.html">Error Handler</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="rewrite-handler.html">Rewrite Handler</a></span>
+				</dt>
+			</dl>
+		</div>
+		<p>Jetty 自带了一大堆的 servlets 与关键的类互相作用.大部分在 org.eclipse.jetty.servlets 包中.这些 servlets 和 filters 是 Jetty 的主要元素,作为一个基于组件的基础设施,持有和运行 J2EE 应用程序.
+			如前所述,它们在运行和维护 Jetty 服务器中起着重要作用.</p>
+		<p>同时也包含了大量的 Jetty 特定的 handlers,允许访问通常不会被暴露的 jetty 的内部,它们在测试环境和许多生产环境场景中非常有用.</p>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h2 class="title" style="clear: both">
+							<a name="default-servlet"></a>Default Servlet
+						</h2>
+					</div>
+				</div>
+			</div>
+			<div class="toc">
+				<dl>
+					<dt>
+						<span class="section"><a href="advanced-extras.html#default-servlet-metadata">信息</a></span>
+					</dt>
+					<dt>
+						<span class="section"><a href="advanced-extras.html#default-servlet-usage">使用</a></span>
+					</dt>
+					<dt>
+						<span class="section"><a href="advanced-extras.html#default-servlet-init">初始参数</a></span>
+					</dt>
+				</dl>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h3 class="title">
+								<a name="default-servlet-metadata"></a>信息
+							</h3>
+						</div>
+					</div>
+				</div>
+				<div class="itemizedlist">
+					<ul class="itemizedlist" type="disc">
+						<li class="listitem"><p>
+								类名:
+								<code class="code">org.eclipse.jetty.servlet.DefaultServlet</code>
+							</p></li>
+						<li class="listitem"><p>Maven Artifact: org.eclipse.jetty:jetty-servlet</p></li>
+						<li class="listitem"><p>
+								Javadoc: <a class="link"
+									href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/servlet/DefaultServlet.html"
+									target="_top">http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/servlet/DefaultServlet.html</a>
+							</p></li>
+						<li class="listitem"><p>
+								Xref: <a class="link"
+									href="http://download.eclipse.org/jetty/stable-9/xref/org/eclipse/jetty/servlet/DefaultServlet.html"
+									target="_top">http://download.eclipse.org/jetty/stable-9/xref/org/eclipse/jetty/servlet/DefaultServlet.html</a>
+							</p></li>
+					</ul>
+				</div>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h3 class="title">
+								<a name="default-servlet-usage"></a>使用
+							</h3>
+						</div>
+					</div>
+				</div>
+				<p>
+					DefaultServlet 实现了 ResourceFactory 接口并继承了 HttpServlet 抽象类.它通常用来映射到 / 并为 context 提供静态内容,OPTION 和 TRACE 的处理.MOVE 被允许如果 PUT 和 DELETE 方法被允许.
+见 DefaultServlet <a class="link" href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/servlet/DefaultServlet.html" target="_top">javadoc</a>.
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h3 class="title">
+								<a name="default-servlet-init"></a>初始参数
+							</h3>
+						</div>
+					</div>
+				</div>
+				<p>Jetty 支持以下的初始参数:</p>
+				<div class="variablelist">
+					<dl>
+						<dt>
+							<span class="term">acceptRanges</span>
+						</dt>
+						<dd>
+							<p>如果为 true, 范围(range) 请求和响应被支持.</p>
+						</dd>
+						<dt>
+							<span class="term">dirAllowed</span>
+						</dt>
+						<dd>
+							<p>如果为 true,目录列表被返回,如果没有 welcome 文件被找到.其它情况下显示 403 Forbidden.</p>
+						</dd>
+						<dt>
+							<span class="term">redirectWelcome</span>
+						</dt>
+						<dd>
+							<p>如果为 treu, welcome 文件被重定向而不是被转发.</p>
+						</dd>
+						<dt>
+							<span class="term">gzip</span>
+						</dt>
+						<dd>
+							<p>如果设置为 true,静态内容将作为 gzip 编码的内容,如果一个匹配中的资源被找到以 ".gz" 结尾.</p>
+						</dd>
+						<dt>
+							<span class="term">resourceBase</span>
+						</dt>
+						<dd>
+							<p>设置替换 context resource base.</p>
+						</dd>
+						<dt>
+							<span class="term">aliases</span>
+						</dt>
+						<dd>
+							<p>如果为 true,资源的别名被允许(那就是,符号链接和 caps variations),可能会绕开安全约束.</p>
+						</dd>
+						<dt>
+							<span class="term">maxCacheSize</span>
+						</dt>
+						<dd>
+							<p>缓存的最大值,0 不缓存.</p>
+						</dd>
+						<dt>
+							<span class="term">maxCachedFileSize</span>
+						</dt>
+						<dd>
+							<p>缓存文件的最大大小.</p>
+						</dd>
+						<dt>
+							<span class="term">maxCachedFiles</span>
+						</dt>
+						<dd>
+							<p>缓存文件的最大数目.</p>
+						</dd>
+						<dt>
+							<span class="term">useFileMappedBuffer</span>
+						</dt>
+						<dd>
+							<p>如果设置为 true, 映射文件缓冲区提供静态内容服务.
+							   将这个值设置为 false 意味着直接缓冲区被使用而不是映射文件缓冲区.默认情况下,这个设置为 true.
+							</p>
+						</dd>
+						<dt>
+							<span class="term">otherGzipFileExtensions</span>
+						</dt>
+						<dd>
+							<p>一个逗号分隔的其它文件扩展名的列表,这意味着一个文件是 gzip 压缩的.如果你没有明确设置这个,它默认是 ".svgz".</p>
+						</dd>
+					</dl>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="configuring-fastcgi.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="administration.html"><i class="icon-chevron-up"></i>
+						Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="proxy-servlet.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Configuring Jetty for FastCGI&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Proxy Servlet</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-10-21T11:19:25+08:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

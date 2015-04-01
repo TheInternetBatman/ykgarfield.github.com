@@ -1,0 +1,310 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>部署 Web 应用程序</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="quick-start-getting-started.html" title="Chapter&nbsp;2.&nbsp;Using Jetty Introduction">
+<link rel="prev" href="quickstart-running-jetty.html" title="Running Jetty">
+<link rel="next" href="quickstart-jetty-coordinates.html" title="Finding Jetty in Maven">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">部署 Web 应用程序</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="quickstart-running-jetty.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<th width="60%" align="center">第2章 &nbsp; Jetty 使用介绍<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="quickstart-jetty-coordinates.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="section">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both">
+						<a name="quickstart-deploying-webapps"></a>部署 Web 应用程序
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<dl>
+				<dt>
+					<span class="section"><a href="quickstart-deploying-webapps.html#d0e1152">Jetty 演示 Web 应用程序</a></span>
+				</dt>
+			</dl>
+		</div>
+		<p>
+			配置了 deploy 模块的 Jetty 服务器实例将有一个 web 应用程序部署器,
+热部署在 <code class="filename"> webapps</code> 目录中找到的文件.
+你放置在 <code class="filename"> webapps</code> 目录中的标准的 WAR 文件和 jetty 配置文件将使用下面的约定被热部署到服务器中:
+		</p>
+		<div class="itemizedlist">
+			<ul class="itemizedlist" type="disc">
+				<li class="listitem"><p>
+						一个名为 <code class="filename">example/</code> 的目录作为标准的 web 应用程序被部署,
+如果它包含一个 <code class="filename">WEB-INF/</code> 子目录,
+否则它被当做静态内容的 context 被部署.context 路径是 <code class="filename">/example</code>
+(也就是 <code class="filename">http://localhost:8080/example/</code>),
+除非基名称是 ROOT(忽略大小写),这种情况下 context 路径是 /.如果目录名称以 ".d" 结束,它将被忽略(但是可通过明确的配置被使用)
+					</p></li>
+				<li class="listitem"><p>
+						一个名为 <code class="filename">example.war</code> 的文件作为标准的 web 应用程序被部署,
+context 路径是 <code class="filename">/example</code>(也就是 <code class="filename">http://localhost:8080/example/</code>).
+如果基目录为 ROOT(忽略大小写), context 路径是 /.如果 <code class="filename"> example.war</code> 和 <code class="filename">example/</code> 都存在,
+只有 WAR 被部署(可能会使用这个目录作为一个解压的位置).
+					</p></li>
+				<li class="listitem"><p>
+						一个 XML 文件比如 <code class="filename">example.xml</code> 被部署作为一个 context(配置通过 XML 定义).
+配置自身必须设置 context 路径.如果 <code class="filename">example.xml</code> 和 <code class="filename">example.war</code> 都存在.
+只有 XML 被部署(但是可能在它的配置中使用 WAR).
+					</p></li>
+			</ul>
+		</div>
+		<p>
+			如果你有一个 标准的 web 应用,你可以将它热部署到 Jetty 中通过拷贝它到 <code class="filename"> webapps </code> 目录.
+		</p>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="d0e1152"></a>Jetty 示例  Web 应用程序
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>demo-base/webapps 目录包含了以下的可部署和辅助的文件:</p>
+			<div class="variablelist">
+				<dl>
+					<dt>
+						<span class="term"><code class="filename">ROOT/</code></span>
+					</dt>
+					<dd>
+						<p>一个静态内容的目录被部署到根 context /, 因为它的名称.包含了 Jetty 示例欢迎页.</p>
+					</dd>
+					<dt>
+						<span class="term"><code class="filename">test.xml</code></span>
+					</dt>
+					<dd>
+						<p>
+							一个 context 配置文件配置和部署 <code class="filename">test.war</code>.
+							额外的配置包含了 context 路径同时设置额外的在 test.d 目录中找到的描述符.
+						</p>
+					</dd>
+					<dt>
+						<span class="term"><code class="filename">test.war</code></span>
+					</dt>
+					<dd>
+						<p>
+							演示 web 应用, 通过 test.xml 配置和部署.
+						</p>
+					</dd>
+					<dt>
+						<span class="term"><code class="filename">test.d</code></span>
+					</dt>
+					<dd>
+						<p>
+							一个包含了被 <code class="filename">test.xml</code> 使用的额外的配置文件, 注入额外的配置到 <code class="filename">test.war</code>.
+						</p>
+					</dd>
+					<dt>
+						<span class="term"><code class="filename">async-rest.war</code></span>
+					</dt>
+					<dd>
+						<p>一个 异步 REST 到 eBay 的 web 应用示例, 基于文件名称自动部署到 /async-rest.</p>
+					</dd>
+					<dt>
+						<span class="term"><code class="filename">test-jaas.war</code></span>
+					</dt>
+					<dd>
+						<p>
+							一个演示 web 应用利用 <a class="link" href="jaas-support.html" title="JAAS Support">JAAS</a> 用于认证.
+						</p>
+					</dd>
+					<dt>
+						<span class="term"><code class="filename">test-jaas.xml</code></span>
+					</dt>
+					<dd>
+						<p>
+							一个 context 配置文件配置 <code class="filename">test-jaas.war</code>.
+							额外的配置包含了设置 <a class="link"
+								href="configuring-security-authentication.html#configuring-login-service" title="Configuring a LoginService">LoginService</a>
+							用于认证(authentication)和授权(authorization).
+						</p>
+					</dd>
+					<dt>
+						<span class="term"><code class="filename">test-jndi.war</code></span>
+					</dt>
+					<dd>
+						<p>
+							一个演示 web 应用展示了 <a class="link" href="jndi.html"
+								title="Chapter&nbsp;11.&nbsp;Configuring JNDI">JNDI</a> 的使用.
+						</p>
+					</dd>
+					<dt>
+						<span class="term"><code class="filename">test-jndi.xml</code></span>
+					</dt>
+					<dd>
+						<p>
+							一个 context 配置文件配置 <code class="filename"> test-jndi.war</code>.
+							额外的配置包含了定义了可以从 webapp 引用的在名称空间的对象.
+						</p>
+					</dd>
+					<dt>
+						<span class="term"><code class="filename">test-spec.war</code></span>
+					</dt>
+					<dd>
+						<p>一个演示 web 应用展示了 annotations, fragments, ServletContainerInitializers, 和其它的 Servlet 规范 3.0/3.1 特性.</p>
+					</dd>
+					<dt>
+						<span class="term"><code class="filename">test-spec.xml</code></span>
+					</dt>
+					<dd>
+						<p>
+							一个演示 web 应用展示了 annotations, fragments, ServletContainerInitializers, 和其它的 Servlet 规范 3.0/3.1 特性.
+						</p>
+					</dd>
+					<dt>
+						<span class="term"><code class="filename">xref-proxy.war</code></span>
+					</dt>
+					<dd>
+						<p>
+							一个演示 web 应用,使用了透明代理(transparent proxy) 服务来自 Eclipse 的 <a class="link"
+href="http://www.eclipse.org/jetty" target="_top">站点</a> 的 Jetty src 
+<a class="link"
+href="http://download.eclipse.org/jetty/stable-9/xref/" target="_top">xref</a>.
+						</p>
+					</dd>
+					<dt>
+						<span class="term"><code class="filename">example-moved.xml</code></span>
+					</dt>
+					<dd>
+						<p>
+							一个演示 context 配置文件, 展示了如何使用 <a class="link"
+								href="moved-context-handler.html" title="Moved Context Handler">MovedContextHandler</a>
+								从一个路径重定向到另一个.
+						</p>
+					</dd>
+				</dl>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="quickstart-running-jetty.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="quick-start-getting-started.html"><i
+						class="icon-chevron-up"></i> Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="quickstart-jetty-coordinates.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Running Jetty&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Finding Jetty in Maven</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-10-21T11:19:22+08:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

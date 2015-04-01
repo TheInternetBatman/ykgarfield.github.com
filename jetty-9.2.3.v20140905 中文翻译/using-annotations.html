@@ -1,0 +1,558 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>使用注解工作</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html"
+	title="Jetty : The Definitive Reference">
+<link rel="up" href="annotations.html"
+	title="Chapter&nbsp;12.&nbsp;Annotations">
+<link rel="prev" href="annotations.html"
+	title="Chapter&nbsp;12.&nbsp;Annotations">
+<link rel="next" href="using-annotations-embedded.html"
+	title="Using Annotations with Jetty Embedded">
+<link
+	xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension"
+	xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0"
+	xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com"
+	xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084"
+	alink="#0000FF">
+	<table
+		xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension"
+		xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0"
+		xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com"
+		xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img
+					src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div
+		xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension"
+		xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0"
+		xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com"
+		xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">使用注解工作</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p"
+					href="annotations.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<th width="60%" align="center">第 12 章 &nbsp; 注解<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i>
+						Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n"
+					href="using-annotations-embedded.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div
+		xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension"
+		xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0"
+		xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com"
+		xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty
+				developers at <span class="website">www.webtide.com</span>
+			</a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom
+			extensions and distributions ... versioned snapshots for indefinite
+			support ... scalability guidance for your apps and Ajax/Comet
+			projects ... development services from 1 day to full product delivery
+		</p>
+	</div>
+	<div class="section">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both">
+						<a name="using-annotations"></a>使用注解工作
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<dl>
+				<dt>
+					<span class="section"><a
+						href="using-annotations.html#d0e10700">哪些注解被支持</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a
+						href="using-annotations.html#discoverable_introspectable_annotations">被发现(Discovered) vs 内省(Introspected)的注解</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a
+						href="using-annotations.html#jars-scanned-for-annotations">
+							哪些 jars 被扫描用来找到注解
+						</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a
+						href="using-annotations.html#d0e10852">
+						多线程的注解扫描</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a
+						href="using-annotations.html#servlet-container-initializers">ServletContainerInitializers</a></span>
+				</dt>
+			</dl>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="d0e10700"></a>哪些注解被支持
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				Jetty 支持以下注解的解释和应用
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>@Resource</p></li>
+					<li class="listitem"><p>@Resources</p></li>
+					<li class="listitem"><p>@PostConstruct</p></li>
+					<li class="listitem"><p>@PreDestroy</p></li>
+					<li class="listitem"><p>@DeclaredRoles</p></li>
+					<li class="listitem"><p>@RunAs</p></li>
+					<li class="listitem"><p>@MultipartConfig</p></li>
+					<li class="listitem"><p>@WebServlet</p></li>
+					<li class="listitem"><p>@WebFilter</p></li>
+					<li class="listitem"><p>@WebListener</p></li>
+					<li class="listitem"><p>@WebInitParam</p></li>
+					<li class="listitem"><p>@ServletSecurity, @HttpConstraint,
+							@HttpMethodConstraint</p></li>
+					<li class="listitem"><p>@HandlesTypes (on
+							ServletContainerInitializers)</p></li>
+				</ul>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="discoverable_introspectable_annotations"></a>被发现(Discovered) vs 内省(Introspected)的注解
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				某些类型的注解可以用在所有的类,不一定只是那些直接与容器交互的.
+				我们称这些类型的注解为 "被找的(discovered)" 来表明容器必须主动地发现和找到它们.
+				其它类型的注解称为 "内省(introspected)",意味着它们出现在容器与它们的生命周期(比如, 
+				javax.servlet.Servlet, javax.servlet.Filter 等)期间交互的类,
+				因此可以在那个时候通过简单的内省被找到.
+			</p>
+			<p>
+				<a name="discovered_annotations"></a>
+				被发现的注解的一些示例是:
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>@WebServlet</p></li>
+					<li class="listitem"><p>@WebFilter</p></li>
+					<li class="listitem"><p>@WebListener</p></li>
+				</ul>
+			</div>
+			<p>内省注解的一些示例是:</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>@PostConstruct</p></li>
+					<li class="listitem"><p>@PreDestroy</p></li>
+					<li class="listitem"><p>@Resource</p></li>
+				</ul>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="jars-scanned-for-annotations"></a>哪些 jars 被扫描用来找到注解
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				web.xml 文件可以包含属性 <code class="code">metadata-complete</code>.
+				如果这个设置为 <code class="code">true</code>, 不会发生可发现的注解的扫描.
+				然而,类的扫描仍然可以发生,因为 <a
+					class="link"
+					href="http://docs.oracle.com/javaee/6/api/javax/servlet/ServletContainerInitializer.html"
+					target="_top">javax.servlet.ServletContainerInitializer</a>s.
+				实现了这个接口的类会被 Jetty 通过使用 <a
+					class="link"
+					href="http://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html"
+					target="_top">javax.util.ServiceLoader</a> 机制找到,
+				如果有一个存在,并且包含了 @HandlesTypes annotation 注解,然后 Jetty 必须扫描 web 应用程序的类层次结构.
+				这个可能是非常耗时的,如果在容器的路径中或 webapp 的 WEB-INF/lib 中有许多的 jars.
+			</p>
+			<p>
+				如果扫描发生-因为 <code class="code">metadata-complete</code> 为 <code class="code">false</code> 或是缺少的,
+				或因为有一个或多个 <a class="link"
+					href="http://docs.oracle.com/javaee/6/api/javax/servlet/ServletContainerInitializer.html"
+					target="_top">javax.servlet.ServletContainerIntializer</a>s 使用了 @HandlesTypes -
+				然后 Jetty 必须考虑容器的 classpath 和 webapp 的 classpth.
+			</p>
+			<p>
+				默认情况下,Jetty 将不会扫描容器的 classpath 中的任何类.
+				如果你需要让容器的 classpath 中的 jars 和类被扫描,
+				你可以使用  <a class="link"
+					href="configuring-webapps.html#container-include-jar-pattern"
+					title="org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern">org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern</a>
+				<a class="link"
+					href="quickstart-config-what.html#context_attributes">context
+					attribute</a>
+				来指定容器的 classpath 被扫描的 jars 和目录的规则.
+			</p>
+			<p>
+				默认情况下, Jetty 将按照顺序扫描 <code class="code">WEB-INF/classes</code> 中类,和 <code class="code">WEB-INF/lib</code> 中所有的 jars,
+				如果有的话, 根据 web.xml 中的绝对或相对顺序建立.如果你的 webapp 包含许多 jars, 你可以通过忽略它们来加速部署.
+				为了这么做,使用 <a class="link"
+					href="configuring-webapps.html#web-inf-include-jar-pattern"
+					title="org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern">org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern</a>
+				<a class="link"
+					href="quickstart-config-what.html#context_attributes">context
+					attribute</a>
+				来定义你想被扫描的 jars 的规则.
+			</p>
+			<p>
+				注意如果你已经为 webapp 配置了一个 <a class="link"
+					href="jetty-classloading.html#using-extra-classpath-method"
+					title="Using the extraClasspath() method">extraClasspath</a>,
+				它也将参与扫描流程.所有的 classes 目录将被同等对待用于扫描意图,好像它们位于 WEB-INF/classes,
+				jars 也被同等对待,好像它们位于 WEB-INF/lib.
+			</p>
+			<p>
+				见下一节 <a class="link"
+					href="using-annotations.html#servlet-container-initializers"
+					title="ServletContainerInitializers">ServletContainerInitializers</a>,
+				如果你需要 <a class="link"
+					href="using-annotations.html#servlet-container-initializers"
+					title="ServletContainerInitializers">控制它们被应用的顺序</a>.
+			</p>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="d0e10852"></a>多线程的注解扫描
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				从 Jetty-9.1 开始, <a class="link"
+					href="using-annotations.html#jars-scanned-for-annotations"
+					title="Which Jars Are Scanned For Discovered Annotations">如果注解扫描被执行</a>,
+				默认情况下 Jetty 将以多线程的方式,为了以最少的时间来完成.
+			</p>
+			<p>
+				如果有一些原因,你不想以多线程的方式来做,你可以配置 Jetty 来恢复为单线程扫描.
+				你有几种方式来配置这个:
+			</p>
+			<div class="orderedlist">
+				<ol class="orderedlist" type="1">
+					<li class="listitem"><p>
+							设置 <a class="link"
+								href="quickstart-config-what.html#context_attributes">context
+								attribute</a>
+							<code class="code">org.eclipse.jetty.annotations.multiThreaded</code>
+							为 <code class="code">false</code>
+						</p></li>
+					<li class="listitem"><p>
+							设置 <a class="link"
+								href="quickstart-config-what.html#server_attributes">Server
+								attribute</a>
+							<code class="code">org.eclipse.jetty.annotations.multiThreaded</code>
+							为 <code class="code">false</code>
+						</p></li>
+					<li class="listitem"><p>
+							设置系统属性 <code class="code">org.eclipse.jetty.annotations.multiThreaded</code> 
+							为 <code class="code">false</code>
+						</p></li>
+				</ol>
+			</div>
+			<p>
+				方法 1 将只影响当前的 webapp.
+				方法 2 将影响部署到同一台服务器实例的所有的 webapps.
+				方法 3 将影响部署到同一台 jvm 中的所有的 webapps.
+			</p>
+			<p>
+				默认情况下,Jetty 将等待最多 60 秒用于扫描线程的完成.你可以通过以下的一种方式来将这个设置为一个较大或较小的值(单位秒).
+			</p>
+			<div class="orderedlist">
+				<ol class="orderedlist" type="1">
+					<li class="listitem"><p>
+							设置 <a class="link"
+								href="quickstart-config-what.html#context_attributes">context
+								attribute</a>
+							<code class="code">org.eclipse.jetty.annotations.maxWait</code>
+						</p></li>
+					<li class="listitem"><p>
+							设置 <a class="link"
+								href="quickstart-config-what.html#server_attributes">Server
+								attribute</a>
+							<code class="code">org.eclipse.jetty.annotations.maxWait</code>
+						</p></li>
+					<li class="listitem"><p>
+							设置系统属性 <code class="code">org.eclipse.jetty.annotations.maxWait</code>
+						</p></li>
+				</ol>
+			</div>
+			<p>
+				方法 1 将只影响当前的 webapp.
+				方法 2 将影响部署到同一台服务器实例的所有的 webapps.
+				方法 3 将影响部署到同一台 jvm 中的所有的 webapps.
+			</p>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="servlet-container-initializers"></a>ServletContainerInitializers
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				<a class="link"
+					href="http://docs.oracle.com/javaee/6/api/javax/servlet/ServletContainerInitializer.html"
+					target="_top">javax.servlet.ServletContainerInitializers</a>
+				可以存在于: 容器的 classpath, webapp 的 WEB-INF/classes 目录, webapp 的 WEB-INF/lib jars, 或任意额外的你已经在 webapp 上配置的
+				<a
+					class="link"
+					href="jetty-classloading.html#using-extra-classpath-method"
+					title="Using the extraClasspath() method">extraClasspath</a>
+			</p>
+			<p>
+				The <a class="link"
+					href="http://jcp.org/aboutJava/communityprocess/final/jsr340/"
+					target="_top">Servlet Specification</a> does not define any order
+				in which these ServletContainerInitializers must be called when the
+				webapp starts. Since jetty-9.1, by default Jetty will call them in
+				the following order:
+				
+				<a class="link"
+					href="http://jcp.org/aboutJava/communityprocess/final/jsr340/"
+					target="_top">Servlet 规范</a>
+				没有定义这些 ServletContainerInitializers 必须被调用的如何顺序,当 webapp 启动的时候.
+				从 jetty-9.1 开始,默认情况下将以以下的顺序调用它们:
+			</p>
+			<div class="orderedlist">
+				<ol class="orderedlist" type="1">
+					<li class="listitem"><p>容器的 classpath 中的 ServletContainerInitializers </p></li>
+					<li class="listitem"><p>WEB-INF/classes 中的 ServletContainerInitializers </p></li>
+					<li class="listitem"><p>
+							ServletContainerInitializers from WEB-INF/lib jars i<span
+								class="emphasis"><em>n the order established in
+									web.xml</em></span>, or in the order that the SCI is returned by the <a
+								class="link"
+								href="http://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html"
+								target="_top">javax.util.ServiceLoader</a> if there is <span
+								class="emphasis"><em>no</em></span> ordering
+							
+							在 web.xml 中建立顺序的 WEB-INF/lib jars 中的 ServletContainerInitializers,
+							或者是 <a
+								class="link"
+								href="http://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html"
+								target="_top">javax.util.ServiceLoader</a> 返回的 SCI,
+								如果<span
+								class="emphasis"><em>没有</em></span> 顺序.
+						</p></li>
+				</ol>
+			</div>
+			<p>
+				与注解扫描一样, <a class="link"
+					href="jetty-classloading.html#using-extra-classpath-method"
+					title="Using the extraClasspath() method">extraClasspath</a> 完全为了 ServletContainerInitializer 回调考虑.
+				用于  webapp 的从 extraClasspath 类目录和从 extraClasspath jars 衍生的  ServletContainerInitializers 类分别在步骤2和步骤3中被调用.
+			</p>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="d0e10960"></a>
+								控制 ServletContainerInitializer 的调用顺序
+							</h4>
+						</div>
+					</div>
+				</div>
+				<div class="section">
+					<div class="titlepage"></div>
+					<p>
+						如果你需要以一种不同于上面概述的顺序来调用 ServletContainerInitializers,
+						你可以使用 <a class="link"
+							href="quickstart-config-what.html#context_attributes">context
+							attribute</a>
+						<code class="code">org.eclipse.jetty.containerInitializerOrder</code>
+						. 设置它为一个逗号分隔的 ServletContainerInitializers 的类名称列表,以你想应用它们的顺序.
+						你可以在列表中可选地使用一次通配符 "*".它将匹配所有的在列表中没有明确命名的 ServletContainerInitializers.
+						这里是一个示例 ,在代码中设置 context 属性(尽管你可以在 xml 以同样的方式完成):
+						
+					</p>
+					<script type="syntaxhighlighter" class="brush: java;toolbar: false">
+          <![CDATA[WebAppContext context = new WebAppContext();
+context.setAttribute("org.eclipse.jetty.containerInitializerOrder", 
+                     "org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer, com.acme.Foo.MySCI, *");]]>
+        </script>
+					<p>
+					在这里例子中,我们保证 WebSocketServerContainerInitializer 是第一个被调用的 ServletContainerInitializer,接下来是 MySCI,
+					然后是所有被找到的还没有被调用的其它的 ServletContainerInitializers.
+					</p>
+				</div>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="d0e10982"></a>排除 ServletContainerInitializers
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>
+					默认情况下,因为根据 Servlet 规范,所有的被发现的 ServletContainerInitializers 被调用(见上面如何控制调用顺序).
+					有些时候,你可能需要防止一些被调用.
+				</p>
+				<p>
+					在这种情况下,你可以定义 	<code class="code">org.eclipse.jetty.containerInitializerExclusionPattern</code>
+					<a class="link"
+						href="quickstart-config-what.html#context_attributes">context
+						属性</a>.这个一个正则表达式,定义了你想要排序的类名称的规则.
+					这里是一个示例,在代码中设置 context 属性,尽管,你可以完全以同样的方式在 xml 中完成:
+				</p>
+				<p>
+					<script type="syntaxhighlighter" class="brush: java;toolbar: false">
+          <![CDATA[WebAppContext context = new WebAppContext();
+context.setAttribute("org.eclipse.jetty.containerInitializerExclusionPattern", 
+                     "com.acme.*|com.corp.SlowContainerInitializer");]]>
+        </script>
+					在这里例子中,我们排序了 com.acme 包中的 <span class="bold"><strong>所有的</strong></span> ServletContainerInitializers,
+					和 SlowContainerInitializer.
+				</p>
+				<p>
+					可以将排除和排序结合起来使用来控制 ServletContainerInitializer 调用-排序将在排序前被应用.
+				</p>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p"
+					href="annotations.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u"
+					href="annotations.html"><i class="icon-chevron-up"></i> Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n"
+					href="using-annotations-embedded.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Chapter&nbsp;12.&nbsp;Annotations&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h"
+					href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Using
+					Annotations with Jetty Embedded</td>
+			</tr>
+		</table>
+	</div>
+	<p
+		xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension"
+		xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0"
+		xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com"
+		xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute
+				to this documentation at <span class="website"><i
+					class="icon-github"></i> Github!</span>
+		</a></span><span style="float: right"><i>(Generated:
+				2014-10-21T11:19:25+08:00)</i></span>
+	</div>
+	</p>
+	<script
+		xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension"
+		xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0"
+		xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com"
+		xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

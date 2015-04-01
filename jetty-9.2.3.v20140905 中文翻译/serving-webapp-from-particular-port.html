@@ -1,0 +1,285 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>从一个特定的端口/Connector 服务一个 WebApp</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="configuring-contexts.html" title="Chapter&nbsp;5.&nbsp;Configuring Contexts">
+<link rel="prev" href="ref-temporary-directories.html" title="Temporary Directories">
+<link rel="next" href="custom-error-pages.html" title="Creating Custom Error Pages">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">从一个特定的端口/Connector 服务一个 WebApp</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="ref-temporary-directories.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<th width="60%" align="center">第5章 &nbsp; 配置 Contexts<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="custom-error-pages.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="section">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both">
+						<a name="serving-webapp-from-particular-port"></a>从一个特定的端口/Connector 服务一个 WebApp
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<dl>
+				<dt>
+					<span class="section"><a href="serving-webapp-from-particular-port.html#creating-server-instances">创建多个 Server 实例</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="serving-webapp-from-particular-port.html#alternative">命令的 Connectors</a></span>
+				</dt>
+			</dl>
+		</div>
+		<p>
+			有时候需要从不同的端口/connectors 服务不同的 web 应用程序.最简单的方式就是创建多个 <code class="code">Server</code> 实例,
+			然而如果 contexts 需要共享资源(如数据源,认证),或者如果端口映射到 web 应用程序不是明确分开的,这样命名的 connector 机制可以被使用.
+		</p>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="creating-server-instances"></a>创建多个 Server 实例
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				如何创建多个 server 实例可以简单完成,当编写嵌入式 jetty 代码的时候通过创建多个 Server 类的实例,并且按需配置它们.如果你在 xml 中配置你的服务器,
+				这也是很容易完成的. jetty.xml 文件中的 Configure 元素的 id 字段用来标识配置应用到的实例,所以为了运行 Server 的两个实例,你可以拷贝 jetty.xml, 
+				jetty-http.xml 和其它使用的配置文件,并修改 "Server" id 为一个新的名称.这可以以和已存在的 jetty.xml 文件以相同的风格和布局完成,
+				或者多个 XML 文件可以合并到单个的文件中.
+			</p>
+			<p>
+				当为一个可选择的 server 创建新的配置的时候:
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>
+							修改所有的 id="Server" 为一个新的 server 名称:
+							<code class="literal">&lt;Configure id="OtherServer" class="org.eclipse.jetty.server.Server"&gt; </code>
+						</p></li>
+					<li class="listitem"><p>
+							对于新的 server,所有的 connector 更改 server 参数的 refid:
+							<code class="literal">&lt;Arg name="server"&gt;&lt;Ref refid="OtherServer" /&gt;&lt;/Arg&gt;</code>
+						</p></li>
+					<li class="listitem"><p>
+							保证属性的任何引用,比如 jetty.port,重命名或者使用绝对值替换
+						</p></li>
+					<li class="listitem"><p>
+							保证任何 deployers AppProviders 引用到一个不同的 "webapps" 目录,这样一组不同的应用程序将被部署.
+					</p></li>
+				</ul>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h4 class="title">
+								<a name="jetty-otherserver.xml"></a>示例其它 Server XML
+							</h4>
+						</div>
+					</div>
+				</div>
+				<p>下面的示例创建了另一个 server 实例,并且使用一个 connector 和  deployer 配置:</p>
+				<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure id="OtherServer" class="org.eclipse.jetty.server.Server">
+    <Set name="handler">
+      <New id="Handlers" class="org.eclipse.jetty.server.handler.HandlerCollection">
+        <Set name="handlers">
+         <Array type="org.eclipse.jetty.server.Handler">
+           <Item>
+             <New id="OtherContexts" class="org.eclipse.jetty.server.handler.ContextHandlerCollection"/>
+           </Item>
+           <Item>
+             <New class="org.eclipse.jetty.server.handler.DefaultHandler"/>
+           </Item>
+         </Array>
+        </Set>
+      </New>
+    </Set>
+
+  <Call name="addConnector">
+    <Arg>
+      <New class="org.eclipse.jetty.server.ServerConnector">
+        <Arg name="server"><Ref refid="OtherServer" /></Arg>
+        <Set name="port">8888</Set>
+      </New>
+    </Arg>
+  </Call>
+
+  <Call name="addBean">
+    <Arg>
+      <New id="DeploymentManager" class="org.eclipse.jetty.deploy.DeploymentManager">
+        <Set name="contexts">
+          <Ref refid="OtherContexts" />
+        </Set>
+
+        <Call id="webappprovider" name="addAppProvider">
+          <Arg>
+            <New class="org.eclipse.jetty.deploy.providers.WebAppProvider">
+              <Set name="monitoredDirName"><Property name="jetty.base" default="." />/other-webapps</Set>
+              <Set name="defaultsDescriptor"><Property name="jetty.home" default="." />/etc/webdefault.xml</Set>
+              <Set name="extractWars">true</Set>
+              <Set name="configurationManager">
+                <New class="org.eclipse.jetty.deploy.PropertiesConfigurationManager"/>
+              </Set>
+            </New>
+          </Arg>
+        </Call>
+      </New>
+    </Arg>
+  </Call>
+</Configure>
+]]>
+        </script>
+				<p>为了运行 other server,简单的将额外的配置文件加入到命令行中:</p>
+				<div class="screenexample">
+					<pre class="screen">java -jar start.jar jetty-otherserver.xml</pre>
+				</div>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="alternative"></a>命名的 Connectors
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				也可以将 connector 命名使用虚拟主机扩展机制使得某些 web 应用程序只被特定的 connectors 访问.
+				如果一个 connector 使用 setName 方法设置了一个名称 "MyConnector",这样这个只会被特定的虚拟主机名称 "@MyConnector" 引用.
+			</p>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="ref-temporary-directories.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="configuring-contexts.html"><i class="icon-chevron-up"></i>
+						Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="custom-error-pages.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Temporary Directories&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Creating Custom Error Pages</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-10-21T11:19:23+08:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

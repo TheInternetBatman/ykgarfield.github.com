@@ -1,0 +1,461 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>部署架构</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="configuring-deployment.html" title="Chapter&nbsp;4.&nbsp;Deploying to Jetty">
+<link rel="prev" href="hot-deployment.html" title="Hot Deployment">
+<link rel="next" href="quickstart-webapp.html" title="Quickstart Webapps">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">部署架构</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="hot-deployment.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<th width="60%" align="center">第4章 &nbsp; 部署到 Jetty<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="quickstart-webapp.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="section">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both">
+						<a name="deployment-architecture"></a>部署架构
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<dl>
+				<dt>
+					<span class="section"><a href="deployment-architecture.html#udm-application-providers">应用程序
+							Providers</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="deployment-architecture.html#udm-application-lifecycle-graph">应用程序生命周期图
+							</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="deployment-architecture.html#udm-lifecycle-bindings">生命周期绑定</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="deployment-architecture.html#default-web-app-provider">理解默认的 WebAppProvider</a></span>
+				</dt>
+			</dl>
+		</div>
+		<p>
+			Jetty 围绕一个可扩展的 Deployment Manager 架构,连同 Web 应用程序将要经历的正式的生命周期而构建.
+		</p>
+		<p>
+			对于 Jetty 要服务的内容(静态或动态),你需要创建一个 <a class="link"
+				href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/handler/ContextHandler.html"
+				target="_top">ContextHandler</a>, 并在适当的地方将它添加到 Jetty 中.一个可以插入式的 DeploymentManager 在 Jetty 7 中存在,使得这个处理更简单.
+			Jetty 分发包包含了示例  DeploymentManager 配置去部署在目录中找到的 WAR 文件到 Jetty,同样部署 Jetty <code class="filename">context.xml</code> 文件到 Jetty 中.
+		</p>
+		<p>
+			DeploymentManager 是典型  webapp 部署机制的核心;它以一个应用程序生命周期图的组合运作,应用程序 Providers 找到和提供应用程序到
+			应用程序生命周期图中,图中的一系列的绑定控制着部署的流程. 
+		</p>
+		<div class="mediaobject" align="center">
+			<table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="195">
+				<tr>
+					<td align="center"><img src="images/Jetty_DeployManager_DeploymentManager_Roles.png" align="middle"
+						width="195"></td>
+				</tr>
+			</table>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="udm-application-providers"></a>应用程序 Providers
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				在 Jetty 部署一个应用程序之前, <a class="link"
+					href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/deploy/AppProvider.html" target="_top">
+					AppProvider</a> 识别 App,然后提供给 DeploymentManager.Jetty 分发包中的主要的 AppProvider 是
+					<a class="link"
+					href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/deploy/providers/WebAppProvider.html"
+					target="_top">WebAppProvider.</a>
+			</p>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="udm-application-lifecycle-graph"></a>应用程序生命周期图
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				DeploymentManager 的核心特征是 
+				<a href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/deploy/AppLifeCycle.html" target="_top">应用程序生命周期图 </a>
+			</p>
+			<div class="mediaobject" align="center">
+				<table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="340">
+					<tr>
+						<td align="center"><img src="images/Jetty_DeployManager_AppLifeCycle-1.png" align="middle" width="340"></td>
+					</tr>
+				</table>
+			</div>
+			<p>
+				这个图中的节点(nodes)和边缘(edges)是预定义在 Jetty 中的,可以找到最常见的动作和状态.这些 nodes 和 edges 不是硬编码的;
+				你可以根据你的需求(比如,对于添加工作流(workflow)、审批(approvals)、分期(staging)、分布(distribution)、协调部署(coordinated deploys)用于集群或云的任意复杂的需求,等等)调整和添加它们.
+			</p>
+			<p>
+				新的应用程序进入这个图的时候是 Undeployed 节点,<a class="link"
+					href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/deploy/DeploymentManager.html#requestAppGoal(org.eclipse.jetty.deploy.App"
+					target="_top"> <code class="code">java.lang.String DeploymentManager.requestAppGoal(App,String)</code></a> 
+				方法推动它们遍历上面的图.
+			</p>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="udm-lifecycle-bindings"></a>生命周期绑定
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				一系列的 <a class="link"
+					href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/deploy/AppLifeCycle.Binding.html"
+					target="_top"> <code class="code">AppLifeCycle.Bindings</code></a>
+				定义了标准行为, 处理 deploying、starting、stopping 和 undeploying 中的应用程序.如果你选择,你可以编写自己的 <code class="code">AppLifeCycle.Bindings</code>,
+				并将它们分配给应用程序生命周期图的任意地方.
+			</p>
+			<p>
+				你编写的新的 <code class="code">AppLifeCycle.Binding</code> 示例的实现可以包括:
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>验证进来的应用程序.</p></li>
+					<li class="listitem"><p>阻止已知的被禁止的应用程序的部署.</p></li>
+					<li class="listitem"><p>提交安装应用程序审计服务在企业环境中.</p></li>
+					<li class="listitem"><p>在集群或云环境中分步应用程序到其它的节点中.</p></li>
+					<li class="listitem"><p>发邮件给所有者(owner)/管理者(admin)应用程序的状态的变化.</p></li>
+				</ul>
+			</div>
+			<p>有四种默认的绑定:</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>
+							<a class="link"
+								href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/deploy/bindings/StandardDeployer.html"
+								target="_top"> StandardDeployer</a> &#8212;在适当的位置将 ContextHandler 部署到 Jetty 中.
+						</p></li>
+					<li class="listitem"><p>
+							<a class="link"
+								href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/deploy/bindings/StandardStarter.html"
+								target="_top"> StandardStarter</a> &#8212; 设置 ContextHandler 为 started, 并开始接收传入的请求.
+						</p></li>
+					<li class="listitem"><p>
+							<a class="link"
+								href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/deploy/bindings/StandardStopper.html"
+								target="_top"> StandardStopper</a> &#8212; 停止 ContextHandler 并停止接收传入的请求.
+						</p></li>
+					<li class="listitem"><p>
+							<a class="link"
+								href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/deploy/bindings/StandardUndeployer.html"
+								target="_top"> StandardUndeployer</a> &#8212; 将 ContextHandler 从 Jetty 中移除.
+						</p></li>
+				</ul>
+			</div>
+			<div class="mediaobject" align="center">
+				<table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="851">
+					<tr>
+						<td align="center"><img src="images/Jetty_DeployManager_DefaultAppLifeCycleBindings.png" align="middle"
+							width="851"></td>
+					</tr>
+				</table>
+			</div>
+			<p>
+				第5个,非标准的绑定,称为 <a class="link"
+					href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/deploy/bindings/DebugBinding.html"
+					target="_top">Debug Binding</a>,也可以用于调试.它记录应用程序生命周期的各种转换.
+				
+			</p>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="default-web-app-provider"></a>理解默认的 WebAppProvider
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				<a class="link"
+					href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/deploy/providers/WebAppProvider.html"
+					target="_top">WebAppProvider</a> 用于打包为 WAR 文件,展开为目录,或声明在 
+				<a class="xref"
+					href="configuring-specific-webapp-deployment.html#deployable-descriptor-file"
+					title="Jetty Deployable Descriptor XML File">Jetty 可部署描述符 XML 文件</a> 的 web 应用程序的部署.
+				它支持热(重新)部署.
+			</p>
+			<p>
+				WebAppProvider 的基本操作是定期扫描部署目录.在标准的 Jetty 分发包中,这个配置在 <code class="filename">${jetty.home}/etc/jetty-deploy.xml</code> 文件中.
+			</p>
+			<div class="informalexample">
+				<script type="syntaxhighlighter" class="brush: xml;toolbar: false">
+          <![CDATA[<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+
+  <Call name="addBean">
+    <Arg>
+      <New id="DeploymentManager" class="org.eclipse.jetty.deploy.DeploymentManager">
+        <Set name="contexts">
+          <Ref refid="Contexts" />
+        </Set>
+        <Call id="webappprovider" name="addAppProvider">
+          <Arg>
+            <New class="org.eclipse.jetty.deploy.providers.WebAppProvider">
+              <Set name="monitoredDirName"><Property name="jetty.home" default="." />/webapps</Set>
+              <Set name="defaultsDescriptor"><Property name="jetty.home" default="." />/etc/webdefault.xml</Set>
+              <Set name="scanInterval">1</Set>
+              <Set name="extractWars">true</Set>
+            </New>
+          </Arg>
+        </Call>
+      </New>
+    </Arg>
+  </Call>
+</Configure>    ]]>
+        </script>
+			</div>
+			<p>
+				上面的配置将创建一个 DeploymentManager 作为一个 Server LifeCycle Bean, 使用下面的配置被追踪,
+			</p>
+			<div class="variablelist">
+				<dl>
+					<dt>
+						<span class="term">contexts</span>
+					</dt>
+					<dd>
+						<p>
+							传递给 HandlerContainer 的引用为已经被发现的且被部署的 webapps(A passed in reference to the HandlerContainer into which the discovered webapps are deployed).
+							这个通常是一个引用指向可在 <code class="filename">${jetty.home}/etc/jetty.xml</code> 文件中找到的 <code class="literal">id="Contexts"</code>,
+							它自身是 ContextHandlerCollection 的一个实例.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">monitoredDirName</span>
+					</dt>
+					<dd>
+						<p>是一个目录的文件路径或 URL 用来扫描 web 应用程序.</p>
+						<p>扫描遵循以下的规则:</p>
+						<div class="orderedlist">
+							<ol class="orderedlist" type="1">
+								<li class="listitem"><p>Base 目录必须存在</p></li>
+								<li class="listitem"><p>
+										隐藏文件(以 <code class="filename">"."</code> 开始)被忽略
+									</p></li>
+								<li class="listitem"><p>
+										以 <code class="filename">".d"</code> 结尾的目录被忽略.
+									</p></li>
+								<li class="listitem"><p>
+										常用的 CVS 目录 <code class="filename">"CVS"</code> 和 <code class="filename">"CVSROOT"</code> 被忽略.
+									</p></li>
+								<li class="listitem"><p>
+										所有的 <code class="filename">*.war</code> 文件被认为是 <a class="link" href="automatic-webapp-deployment.html"
+											title="Automatic Web Application Deployment">自动部署</a> 的.
+									</p></li>
+								<li class="listitem"><p>
+										所有的 <code class="filename">*.xml</code> 文件被认为是 
+										<a class="link"
+											href="configuring-specific-webapp-deployment.html#deployable-descriptor-file"
+											title="Jetty Deployable Descriptor XML File">可部署的 context 描述符</a>
+									</p></li>
+								<li class="listitem"><p>
+										在特殊的情况中,也就是 WAR 文件和 XML 文件存在相同的基名称,WAR 文件被标记为不可部署的,XML 文件被配置和引用 WAR 文件.(见
+										<a class="xref"
+											href="configuring-specific-webapp-deployment.html" title="Configuring a Specific Web Application Deployment">配置一个特殊的 Web 应用程序 Deployment</a>
+										)
+									</p></li>
+								<li class="listitem"><p>目录被认为是可以部署的</p></li>
+								<li class="listitem"><p>在特殊的情况中,也就是一个目录和 WAR 文件有着相同的名称,目录被标记为不可部署的,WAR 文件被自动部署.</p></li>
+								<li class="listitem"><p>在特殊的情况中,一个目录和 XML 文件有着相同的名称,目录被标记为不可部署的, XML 文件被配置,并引用目录.</p></li>
+								<li class="listitem"><p>所有其他的目录被自动部署.</p></li>
+								<li class="listitem"><p>
+										如果自动部署被使用,特别的文件名称 <code class="filename">root.war</code> 或者
+										目录名称为 <code class="filename">root</code> 的目录将被部署到 <code class="literal">"/"</code> context path.
+									</p></li>
+							</ol>
+						</div>
+					</dd>
+					<dt>
+						<span class="term">defaultsDescriptor</span>
+					</dt>
+					<dd>
+						<p>
+							特殊的默认的 Servlet web 描述符用于所有的 Web 应用程序.这个描述符的目的是包含 Web 应用程序常用的配置在 Web 应用程序自己的 
+							<code class="filename">/WEB-INF/web.xml</code> 被应用前.
+							<code class="filename">${jetty.home}/etc/webdefault.xml</code> 随着 Jetty 分发包一起提供,控制 JSP 和 servlets 的配置,
+							还有 mimetypes 和其它的基本的元数据.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">scanInterval</span>
+					</dt>
+					<dd>
+						<p>
+							两次 <code class="literal">monitoredDirName</code> 之间清理的周期(以秒为单位)用于目录的变化:新的 contexts 被部署,
+							修改过的 contexts 被重新部署,或者移除 contexts 变为未部署的.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">extractWars</span>
+					</dt>
+					<dd>
+						<p>
+							如果此参数为 true,所有压缩的 WAR 或 zip 文件被解压到一个临时目录在被部署前.
+							这是明智的,如果在 web apps 中有未编译的 JSPs.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">parentLoaderPriority</span>
+					</dt>
+					<dd>
+						<p>
+							参数为 boolean,选择标准的 Java <a class="link" href="jetty-classloading.html"
+								title="Jetty Classloading">父加载器优先代理(parent first delegation)</a> 或 <a class="link"
+								href="jetty-classloading.html" title="Jetty Classloading">servlet 规范 webapp classloading 优先级</a>
+							被使用.后者是默认的.
+						</p>
+					</dd>
+				</dl>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="hot-deployment.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="configuring-deployment.html"><i
+						class="icon-chevron-up"></i> Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="quickstart-webapp.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Hot Deployment&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Quickstart Webapps</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-11-23T01:00:22-08:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

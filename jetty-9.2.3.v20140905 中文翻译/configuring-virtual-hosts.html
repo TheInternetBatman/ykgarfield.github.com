@@ -1,0 +1,563 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>配置虚拟主机</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="configuring-contexts.html" title="Chapter&nbsp;5.&nbsp;Configuring Contexts">
+<link rel="prev" href="configuring-contexts.html" title="Chapter&nbsp;5.&nbsp;Configuring Contexts">
+<link rel="next" href="ref-temporary-directories.html" title="Temporary Directories">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">配置虚拟主机</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="configuring-contexts.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<th width="60%" align="center">第5章 &nbsp; 配置 Contexts<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="ref-temporary-directories.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="section">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title" style="clear: both">
+						<a name="configuring-virtual-hosts"></a>配置虚拟主机
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<dl>
+				<dt>
+					<span class="section"><a href="configuring-virtual-hosts.html#configuring-a-virtual-host">虚拟主机名称</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="configuring-virtual-hosts.html#d0e3487">示例虚拟主机配置</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="configuring-virtual-hosts.html#different-virtual-hosts-different-contexts">
+					使用一组不同的虚拟主机来选择不同的 Context
+					</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a
+						href="configuring-virtual-hosts.html#different-virtual-hosts-different-context-same-path">
+					使用一组不同的虚拟主机在相同的 Context Path 选择不同的 Context
+				</dt>
+			</dl>
+		</div>
+		<p>
+			一个虚拟主机是一个可选择的名称,在 DNS 中注册,用于一个 IP 地址,这样多个域名将被解析到一个共享的服务器实例的同一个 IP.
+			如果要服务的内容的别名名称是
+			<a class="link" href="configuring-virtual-hosts.html#different-virtual-hosts-different-contexts"
+				title="Using Different Sets of Virtual Hosts to Select Different Contexts">不同的</a>(If the content to be served to the aliases names is different),
+			那么每个被部署的  <a class="link"
+				href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/handler/ContextHandler.html"
+				target="_top">context</a> 需要配置一个虚拟主机来表明哪个 context 将作出响应.
+		</p>
+		<p>
+			虚拟主机被设置到一个 
+			<a class="link"
+				href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/handler/ContextHandler.html"
+				target="_top">context</a>
+			通过调用 	
+			<a class="link"
+				href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/handler/ContextHandler.html#setVirtualHosts(java.lang.String[])"
+				target="_top"><code class="code">setVirtualHosts</code></a> 或 <a class="link"
+				href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/handler/ContextHandler.html#addVirtualHosts(java.lang.String[])"
+				target="_top"><code class="code">addVirtualHost</code></a> 方法来完成.
+		</p>
+		<div class="itemizedlist">
+			<ul class="itemizedlist" type="disc">
+				<li class="listitem"><p>
+						在 webapps 目录中(见 jetty 分发包中的 
+						<a
+							class="link"
+							href="http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/plain/tests/test-webapps/test-jetty-webapp/src/main/config/demo-base/webapps/test.xml"
+							target="_top">test.xml</a> 示例
+						)使用一个 	
+						<a class="link" href="configuring-specific-webapp-deployment.html#deployable-descriptor-file"
+							title="Jetty Deployable Descriptor XML File">context XML</a> 文件.
+					</p></li>
+				<li class="listitem"><p>
+						使用 <code class="filename">WEB-INF/jetty-web.xml</code> 文件(废弃).
+					</p></li>
+				<li class="listitem"><p>
+						使用一个 binding 创建一个 <a class="link" href="deployment-architecture.html" title="Deployment Architecture">自定义的 deployer</a>
+						为同一个 webapps 目录下的所有的 contexts 配置虚拟主机.
+					</p></li>
+				<li class="listitem"><p>
+						直接在 <a class="link" href="advanced-embedding.html"
+							title="Chapter&nbsp;25.&nbsp;Embedding">嵌入式</a> 使用上调用 
+						<a class="link"
+							href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/handler/ContextHandler.html#setVirtualHosts(java.lang.String[])"
+							target="_top">API</a>.
+					</p></li>
+			</ul>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="configuring-a-virtual-host"></a>虚拟主机名称:
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>Jetty 支持以下风格的虚拟主机名称:</p>
+			<div class="variablelist">
+				<dl>
+					<dt>
+						<span class="term">www.hostname.com</span>
+					</dt>
+					<dd>
+						<p>
+							一个完全限定主机名称.列出所有的变体很重要,因为一个站点既可以从 www.hostname.com 接收传输也可以只是从 hostname.com 接收传输.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">*.hostname.com</span>
+					</dt>
+					<dd>
+						<p>
+							一个通配符限定主机,将只匹配任意名称中的一个级别. *.foo.com 将匹配 www.foo.com 和 m.foo.com,
+							但是 www.other.foo.com 不行.
+						</p>
+					</dd>
+					<dt>
+						<span class="term">10.0.0.2</span>
+					</dt>
+					<dd>
+						<p>
+							一个 IP 地址可以被给定作为一个虚拟主机名称表明一个 context 应该处理在那台服务器端口上接收到的请求,但是没有一个主机名称被指定(HTTP/0.9 或 HTTP/1.0)	
+						</p>
+					</dd>
+					<dt>
+						<span class="term">@ConnectorName</span>
+					</dt>
+					<dd>
+						<p>
+							一个 connector 名称,不是一个严格的虚拟主机,但是只会匹配一个通过 
+							<a class="link" href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/AbstractConnector.html#setName(java.lang.String)"
+								target="_top">Connector.setName(String)</a> 设置有一个匹配名称的 connectors 上接收到的请求,
+						</p>
+					</dd>
+					<dt>
+						<span class="term">www.&#8730;integral.com</span>
+					</dt>
+					<dd>
+						<p>
+							非 ascii 和 <a class="link" href="http://en.wikipedia.org/wiki/Internationalized_domain_name" target="_top">IDN</a>
+							域名可以被使用 <a class="link" href="http://en.wikipedia.org/wiki/Punycode"
+								target="_top">Puny Code</a> 被设置为虚拟主机,等同于可以从一个 
+							<a class="link" href="http://network-tools.com/idn-convert.asp" target="_top">Punycode/IDN 转换器</a> 获得.
+							比如如果非 ascii 域名 <code class="literal">www.&#8730;integral.com</code> 给定到一个浏览器中,然后它将使用域名 
+							<code class="literal">www.xn--integral-7g7d.com</code> 作出一个请求,名称应该被加上作为虚拟主机名称.
+						</p>
+					</dd>
+				</dl>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="d0e3487"></a>示例虚拟主机配置
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				虚拟主机可以被用于任何的 context,也就是 <a class="link"
+					href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/handler/ContextHandler.html"
+					target="_top">ContextHandler</a>.让我们看下一个示例,配置一个 web 应用程序-通过
+					<a class="link"
+					href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/webapp/WebAppContext.html" target="_top">WebAppContext</a>
+					类-使用虚拟主机表示.你可以提供 web 应用程序可达的 IP 地址列表或名称列表.
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>
+							<code class="code">333.444.555.666</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">127.0.0.1</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">www.blah.com</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">www.blah.net</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">www.blah.org</code>
+						</p></li>
+				</ul>
+			</div>
+			<p>
+				假设你有一个称为 <code class="filename">blah.war</code> 的 webapp,然后你想让上面所有的名称和地址可以在路径 "<code class="code">/blah</code>	"
+				上服务.这里你可以使用一个  <a class="link"
+					href="configuring-specific-webapp-deployment.html#deployable-descriptor-file"
+					title="Jetty Deployable Descriptor XML File">context XML</a> 文件配置虚拟主机.
+			</p>
+			<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/blah</Set>
+  <Set name="war"><Property name="jetty.webapps"/>/webapps/blah.war</Set>
+  <Set name="virtualHosts">
+    <Array type="java.lang.String">
+      <Item>333.444.555.666</Item>
+      <Item>127.0.0.1</Item>
+      <Item>www.blah.com</Item>
+      <Item>www.blah.net</Item>
+      <Item>www.blah.org</Item>
+    </Array>
+  </Set>
+</Configure>]]>
+        </script>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="different-virtual-hosts-different-contexts"></a>
+							使用不同的虚拟主机来选择不同的 Contexts
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				你可以通过提供一个特定的虚拟主机列表来配置不同的 contexts 在不同的虚拟机上作出响应.
+			</p>
+			<p>比如,假设你的虚拟机上有这些 DNS 名称:</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>
+							<code class="code">www.blah.com</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">www.blah.net</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">www.blah.org</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">www.other.com</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">www.other.net</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">www.other.org </code>
+						</p></li>
+				</ul>
+			</div>
+			<p>
+				假设你有2个 webapps,一个为 <code class="filename">blah.war</code>,你想从<code class="code">*.blah.*</code> 名称中得到服务,
+				一个为  <code class="filename">other.war</code>,你只想从 <code class="code">*.other.*</code> 名称中得到服务.
+			</p>
+			<p>
+				使用预准备的 <a class="link" href="">context XML</a> 文件的方式,每个 webapp 产生了如下内容:
+			</p>
+			<p>
+				对于
+				<code class="code">blah</code>
+				webapp:
+			</p>
+			<div class="informalexample">
+				<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/blah</Set>
+  <Set name="war"><Property name="jetty.webapps"/>/webapps/blah.war</Set>
+  <Set name="virtualHosts">
+    <Array type="java.lang.String">
+      <Item>www.blah.com</Item>
+      <Item>www.blah.net</Item>
+      <Item>www.blah.org</Item>
+    </Array>
+  </Set>
+</Configure>
+]]>
+        </script>
+			</div>
+			<p>
+				现在这些 urls 解析到 blah context(也就是 <code class="filename">blah.war</code>):
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>
+							<code class="code">http://www.blah.com/blah</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">http://www.blah.net/blah</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">http://www.blah.org/blah</code>
+						</p></li>
+				</ul>
+			</div>
+			<p>
+				对于
+				<code class="code">other</code>
+				webapp:
+			</p>
+			<div class="informalexample">
+				<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/other</Set>
+  <Set name="war"><Property name="jetty.webapps"/>/webapps/other.war</Set>
+  <Set name="virtualHosts">
+    <Array type="java.lang.String">
+      <Item>www.other.com</Item>
+      <Item>www.other.net</Item>
+      <Item>www.other.org</Item>
+    </Array>
+  </Set>
+</Configure>]]>
+        </script>
+			</div>
+			<p>现在这些 urls 解析到 other context(也就是 other.war):</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>
+							<code class="code">http://www.other.com/other</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">http://www.other.net/other</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">http://www.other.org/other</code>
+						</p></li>
+				</ul>
+			</div>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h3 class="title">
+							<a name="different-virtual-hosts-different-context-same-path"></a>
+							使用不同的虚拟主机在相同的 context path 上选择不同的 Contexts.
+						</h3>
+					</div>
+				</div>
+			</div>
+			<p>
+				在前一个小节,我们设置了2个不同的 contexts 在 <span class="emphasis"><em>不同的</em></span> context paths 上从不同的虚拟主机获取服务.
+				然而,没有要求 context paths 必须是不同的:你可以对多个 contexts 使用相同的 context path,并使用虚拟主机来决定哪个服务于一个给定的请求.
+			</p>
+			<p>
+				考虑一个示例,我们有和之前相同的一组 DNS 名称,和相同的 webapps <code class="filename">blah.war</code> 及 <code class="filename">other.war</code>.
+				我们想让 <code class="filename">blah.war</code> 在 <code class="code">*.blah.*</code> 的主机名称上作出响应,
+				并且 <code class="filename">other.war</code> 在 <code class="code">*.other.*</code> 名称上作出响应.
+				然而,我们想让我们 <span class="emphasis"><em> 所有的 </em></span>客户端使用 <code class="code">"/"</code> context path,
+				无论指向的 context 是哪一个.
+			</p>
+			<p>
+				换句话说,我们想让下面所有的 urls 映射到 <code class="filename">blah.war</code>:
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>
+							<code class="code">http://www.blah.com/</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">http://www.blah.net/</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">http://www.blah.org/</code>
+						</p></li>
+				</ul>
+			</div>
+			<p>
+				类似地,我们想让下面所有的 urls 映射到 <code class="filename">other.war</code>
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>
+							<code class="code">http://www.other.com/</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">http://www.other.net/</code>
+						</p></li>
+					<li class="listitem"><p>
+							<code class="code">http://www.other.org/</code>
+						</p></li>
+				</ul>
+			</div>
+			<p>
+				为了完成这个,我们简单地使用相同的 context path "/" 用于我们的每个 webapps,同时仍然应用我们的虚拟主机名称的不同集合.
+				</p>
+			<p>对于 foo webapp:</p>
+			<div class="informalexample">
+				<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/</Set>
+  <Set name="war"><Property name="jetty.webapps"/>/webapps/foo.war</Set>
+  <Set name="virtualHosts">
+    <Array type="java.lang.String">
+      <Item>www.blah.com</Item>
+      <Item>www.blah.net</Item>
+      <Item>www.blah.org</Item>
+    </Array>
+  </Set>
+</Configure>
+]]>
+        </script>
+			</div>
+			<p>对于 bar webapp:</p>
+			<div class="informalexample">
+				<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/</Set>
+  <Set name="war"><Property name="jetty.webapps"/>/webapps/bar.war</Set>
+  <Set name="virtualHosts">
+    <Array type="java.lang.String">
+      <Item>www.other.com</Item>
+      <Item>www.other.net</Item>
+      <Item>www.other.org</Item>
+    </Array>
+  </Set>
+</Configure>
+]]>
+        </script>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="configuring-contexts.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="configuring-contexts.html"><i class="icon-chevron-up"></i>
+						Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="ref-temporary-directories.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Chapter&nbsp;5.&nbsp;Configuring Contexts&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Temporary Directories</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-10-21T11:19:23+08:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

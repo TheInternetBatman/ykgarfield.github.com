@@ -1,0 +1,566 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>第10章 &nbsp; Session 管理</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="administration.html" title="Part&nbsp;III.&nbsp;Jetty Administration Guide">
+<link rel="prev" href="startup-windows-service.html" title="Startup via Windows Service">
+<link rel="next" href="using-persistent-sessions.html" title="Using Persistent Sessions">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br> <span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script> <gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">第10章 &nbsp; Session 管理</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="startup-windows-service.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<th width="60%" align="center">Part&nbsp;III.&nbsp;Jetty 管理指南<br> <a accesskey="p" href="index.html"><i
+						class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="using-persistent-sessions.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="chapter">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title">
+						<a name="session-management"></a>第10章 &nbsp; Session 管理
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<p>
+				<b>目录</b>
+			</p>
+			<dl>
+				<dt>
+					<span class="section"><a href="session-management.html#setting-session-characteristics">设置 Session 特性</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="using-persistent-sessions.html">使用持久化 Sessions</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="session-clustering-jdbc.html">使用数据库进行 Session 集群</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="session-clustering-mongodb.html">使用 MongoDB 进行 Session 集群</a></span>
+				</dt>
+			</dl>
+		</div>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h2 class="title" style="clear: both">
+							<a name="setting-session-characteristics"></a>设置 Session 特性
+						</h2>
+					</div>
+				</div>
+			</div>
+			<div class="toc">
+				<dl>
+					<dt>
+						<span class="section"><a href="session-management.html#using-init-parameters">使用初始参数</a></span>
+					</dt>
+					<dt>
+						<span class="section"><a href="session-management.html#d0e9244">使用 Servlet 3.0 Session Configuration</a></span>
+					</dt>
+				</dl>
+			</div>
+			<p>为了修改一个 web 应用程序的 session 特性, 你可以使用如下的参数,将它们应用到一个示例中:
+			</p>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h3 class="title">
+								<a name="using-init-parameters"></a>使用初始参数
+							</h3>
+						</div>
+					</div>
+				</div>
+				<p>使用这些参数来设置 session 特性.</p>
+				<div class="table">
+					<a name="d0e9154"></a>
+					<p class="title">
+						<b>表&nbsp;10.1.&nbsp;初始参数</b>
+					</p>
+					<div class="table-contents">
+						<table summary="Init Parameters" border="1">
+							<colgroup>
+								<col>
+								<col>
+								<col>
+							</colgroup>
+							<thead>
+								<tr>
+									<th align="left">Context 参数</th>
+									<th align="left">默认值</th>
+									<th align="left">描述符</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>org.eclipse.jetty.servlet.SessionCookie</td>
+									<td>JSESSIONID</td>
+									<td>
+										Session cookie 名称默认为 JSESSIONID, 但是可以使用这个 context 参数为一个特定 webapp 进行设置.
+									</td>
+								</tr>
+								<tr>
+									<td>org.eclipse.jetty.servlet.SessionIdPathParameterName</td>
+									<td>jsessionid</td>
+									<td>
+										Session URL 参数名称.默认为 jsessionid,但是可以使用这个 context 参数为一个特定 webapp 进行设置.
+										设置为 "none" 禁用 URL 重写.
+									</td>
+								</tr>
+								<tr>
+									<td>org.eclipse.jetty.servlet.SessionDomain</td>
+									<td>-</td>
+									<td>Session 域.如果这是属性设置作为一个 ServletContext 参数,它将被用作 session cookie 的域.
+										如果没有设置,没有域为 session cookie 指定.
+									</td>
+								</tr>
+								<tr>
+									<td>org.eclipse.jetty.servlet.SessionPath</td>
+									<td>-</td>
+									<td>
+										Session 路径.如果这是属性设置作为一个 ServletContext 参数,它将被用作 session cookie 的路径.
+										如果没有设置,没有路径为 session cookie 指定.
+									</td>
+								</tr>
+								<tr>
+									<td>org.eclipse.jetty.servlet.MaxAge</td>
+									<td>-1</td>
+									<td>
+										Session 最大年龄(Max Age).如果这个属性设置为 ServletContext 参数,它将被用作 session cookie 的最大年龄.
+										如果没有设置,-1 的最大年龄将被使用.
+									</td>
+								</tr>
+								<tr>
+									<td>org.eclipse.jetty.servlet.CheckingRemoteSessionIdEncoding</td>
+									<td>false</td>
+									<td>If true, Jetty will add JSESSIONID parameter even when encoding external urls with calls to
+										encodeURL(). False by default.
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<br class="table-break">
+				<div class="section">
+					<div class="titlepage">
+						<div>
+							<div>
+								<h4 class="title">
+									<a name="applying-init-parameters"></a>应用初始参数
+								</h4>
+							</div>
+						</div>
+					</div>
+					<p>下面的部分提供了如何应用初始参数的示例.</p>
+					<div class="section">
+						<div class="titlepage">
+							<div>
+								<div>
+									<h5 class="title">
+										<a name="context-parameter-example"></a>Context 参数示例
+									</h5>
+								</div>
+							</div>
+						</div>
+						<p>
+							你可以在一个 web 应用程序的 <code class="filename"> WEB-INF/web.xml</code> 文件中
+							设置这些参数作为 context 参数:
+						</p>
+						<div class="informalexample">
+							<script type="syntaxhighlighter" class="brush: xml;toolbar: false">
+          <![CDATA[
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app
+  xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+  version="2.5">
+  ...
+  <context-param>
+    <param-name>org.eclipse.jetty.servlet.SessionCookie</param-name>
+    <param-value>XSESSIONID</param-value>
+  </context-param>
+  <context-param>
+    <param-name>org.eclipse.jetty.servlet.SessionIdPathParameterName</param-name>
+    <param-value>xsessionid</param-value>
+  </context-param>
+  ...
+</web-app>
+
+        ]]>
+        </script>
+						</div>
+					</div>
+					<div class="section">
+						<div class="titlepage">
+							<div>
+								<div>
+									<h5 class="title">
+										<a name="web-application-examples"></a>Web 应用程序示例
+									</h5>
+								</div>
+							</div>
+						</div>
+						<p>
+							你可以在一个 web 应用程序中配置初始参数,在代码中,或在一个 Jetty context xml 文件中:
+						</p>
+						<div class="informalexample">
+							<script type="syntaxhighlighter" class="brush: xml;toolbar: false">
+          <![CDATA[
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/test</Set>
+  <Set name="war"><SystemProperty name="jetty.home" default="."/>/webapps/test</Set>
+ 
+  ...
+ 
+  <Call name="setInitParameter">
+        <Arg>org.eclipse.jetty.servlet.SessionCookie</Arg>
+        <Arg>XSESSIONID</Arg>
+  </Call>
+  <Call name="setInitParameter">
+        <Arg>org.eclipse.jetty.servlet.SessionIdPathParameterName</Arg>
+        <Arg>xsessionid</Arg>
+  </Call>
+</Configure>
+
+        ]]>
+        </script>
+						</div>
+					</div>
+					<div class="section">
+						<div class="titlepage">
+							<div>
+								<div>
+									<h5 class="title">
+										<a name="init-parameter-examples"></a>SessionManager 示例
+									</h5>
+								</div>
+							</div>
+						</div>
+						<p>
+							你可以直接在 <code class="code">SessionManager</code> 实例上配置初始参数,
+							在代码中或 xml 中:
+						</p>
+						<div class="informalexample">
+							<script type="syntaxhighlighter" class="brush: xml;toolbar: false">
+          <![CDATA[
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/test</Set>
+  <Set name="war"><SystemProperty name="jetty.home" default="."/>/webapps/test</Set>
+ 
+   ...
+
+  <Get name="sessionHandler">
+     <Set name="sessionManager">
+         <New class="org.eclipse.jetty.server.session.HashSessionManager">
+            <Set name="sessionCookie">XSESSIONID</Set>
+            <Set name="sessionIdPathParameterName">xsessionid</Set>
+         </New>
+     </Set>
+  </Get>
+</Configure>
+
+        ]]>
+        </script>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h3 class="title">
+								<a name="d0e9244"></a>使用 Servlet 3.0 Session 配置
+							</h3>
+						</div>
+					</div>
+				</div>
+				<p>
+					随着 <a class="link" href="http://jcp.org/en/jsr/detail?id=315" target="_top"> Servlet
+						规范 3.0</a> 的出现,有一些新的 APIs 用于配置 session 处理特性.之前只能通过 jetty 特定的 
+						<a class="link" href="session-management.html#session-init-params">init-parameters</a> 实现的,
+					现在可以通过在代码或 web.xml 中以容器的方式完成.
+				</p>
+				<div class="section">
+					<div class="titlepage">
+						<div>
+							<div>
+								<h4 class="title">
+									<a name="session-cookie-configuration"></a>SessionCookieConfiguration
+								</h4>
+							</div>
+						</div>
+					</div>
+					<p>
+						<a class="link" href="http://docs.oracle.com/javaee/6/api/javax/servlet/SessionCookieConfig.html"
+							target="_top">javax.servlet.SessionCookieConfig</a> 类用于设置 session 处理特性.
+						对于全部细节, 查阅
+						<a class="link"
+							href="http://docs.oracle.com/javaee/6/api/javax/servlet/SessionCookieConfig.html" target="_top">javadoc</a>. 
+					</p>
+					<p>
+						这里是你如何使用它的一个示例: ServletContextListener 得到 SessionCookieConfig, 然后为它设置某些新值,
+						当 context 被初始化的时候.
+					</p>
+					<p>
+						<script type="syntaxhighlighter" class="brush: java;toolbar: false">
+          <![CDATA[import javax.servlet.SessionCookieConfig;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+public class TestListener implements ServletContextListener 
+{
+
+    public void contextInitialized(ServletContextEvent sce) 
+    {
+        String comment = "This is my special cookie configuration";
+        String domain = "foo.com";
+        String path = "/my/special/path";
+        boolean isSecure = true;
+        boolean httpOnly = false;
+        int maxAge = 30000;
+        String cookieName = "FOO_SESSION";
+
+
+        SessionCookieConfig scf = sce.getServletContext().getSessionCookieConfig();
+
+        scf.setComment(comment);
+        scf.setDomain(domain);
+        scf.setHttpOnly(httpOnly);
+        scf.setMaxAge(maxAge);
+        scf.setPath(path);
+        scf.setSecure(isSecure);
+        scf.setName(coookieName);
+        }
+    }
+
+    public void contextDestroyed(ServletContextEvent sce) 
+    {
+
+    }
+}]]>
+        </script>
+						
+						你也可以使用 web.xml 来配置 session 处理特性:这里是一个示例,和代码所做的完全一样:
+					</p>
+					<script type="syntaxhighlighter" class="brush: xml;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app
+   xmlns="http://java.sun.com/xml/ns/javaee"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+   metadata-complete="true"
+   version="3.0">
+
+   <session-config>
+      <cookie-config>
+         <comment>This is my special cookie configuration</comment>
+         <domain>foo.com</domain>
+         <http-only>false</http-only>
+         <max-age>30000</max-age>
+         <path>/my/special/path</path>
+         <secure>true</secure>
+         <name>FOO_SESSION</name>
+      </cookie-config>
+   </session-config>
+</web-app>]]>
+        </script>
+				</div>
+				<div class="section">
+					<div class="titlepage">
+						<div>
+							<div>
+								<h4 class="title">
+									<a name="session-tracking-modes"></a>SessionTrackingModes
+								</h4>
+							</div>
+						</div>
+					</div>
+					<p>
+						除了 <a class="link" href="session-management.html#session-cookie-configuration"
+							title="SessionCookieConfiguration">session cookies</a> 的配置,
+						从 Servlet 3.0 开始,你也可以使用 <a class="link"
+							href="http://docs.oracle.com/javaee/6/api/javax/servlet/SessionTrackingMode.html" target="_top">javax.servlet.SessionTrackingMode</a>
+						来配置 session 追踪.
+					</p>
+					<p>
+						为了确认被容器使用的 <span class="emphasis"><em>默认</em></span> session 追踪特性,调用:
+					</p>
+					<script type="syntaxhighlighter" class="brush: java;toolbar: false">
+          <![CDATA[javax.servlet.ServletContext.getDefaultSessionTrackingModes();]]>
+        </script>
+					<p>
+						这个返回 javax.servlet.SessionTrackingMode 的一个 java.util.Set.
+						Jetty 中 <span class="emphasis"><em>默认的</em></span> session 追踪模式是:
+					</p>
+					<div class="itemizedlist">
+						<ul class="itemizedlist" type="disc">
+							<li class="listitem"><p>
+									<a class="link" href="http://docs.oracle.com/javaee/6/api/javax/servlet/SessionTrackingMode.html#COOKIE"
+										target="_top">SessionTrackingMode.COOKIE</a>
+								</p></li>
+							<li class="listitem"><p>
+									<a class="link" href="http://docs.oracle.com/javaee/6/api/javax/servlet/SessionTrackingMode.html#URL"
+										target="_top">SessionTrackingMode.URL</a>
+								</p></li>
+						</ul>
+					</div>
+					<p>
+					为了查看这个 Context 中实际上是哪种 session 追踪模式生效,下面的调用会返回 javax.servlet.SessionTrackingMode 的一个 java.util.Set.
+					</p>
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[javax.servlet.ServletContext.getEffectiveSessionTrackingModes();]]>
+        </script>
+					<p>为了修改 session 追踪模式,调用:</p>
+					<script type="syntaxhighlighter" class="brush: java;toolbar: false">
+          <![CDATA[javax.servlet.ServletContext.setSessionTrackingModes(Set<SessionTrackingMode>);]]>
+        </script>
+					<p>你也可也在 web.xml 中设置追踪模式,比如:</p>
+					<script type="syntaxhighlighter" class="brush: xml;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app
+   xmlns="http://java.sun.com/xml/ns/javaee"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+   metadata-complete="true"
+   version="3.0">
+
+   <session-config>
+      <tracking-mode>URL</tracking-mode>
+      <tracking-mode>COOKIE</tracking-mode>
+   </session-config>
+</web-app>]]>
+        </script>
+					<p></p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="startup-windows-service.html"><i
+						class="icon-chevron-left"></i> Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="administration.html"><i class="icon-chevron-up"></i>
+						Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="using-persistent-sessions.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Startup via Windows Service&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Using Persistent Sessions</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-09-10T08:03:26-05:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>

@@ -1,0 +1,839 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>第6章 &nbsp; 配置 Jetty Connectors</title>
+<link rel="stylesheet" type="text/css" href="css/docbook.css">
+<meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1">
+<meta name="keywords"
+	content="jetty, servlet, servlet-api, cometd, http, spdy, websocket, eclipse, maven, java, server, software">
+<link rel="home" href="index.html" title="Jetty : The Definitive Reference">
+<link rel="up" href="configuring.html" title="Part&nbsp;II.&nbsp;Jetty Configuration">
+<link rel="prev" href="setting-form-size.html" title="Setting Max Form Size">
+<link rel="next" href="configuring-ssl.html" title="Configuring SSL">
+<link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+	xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+	xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+	xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon"
+	href="images/favicon.ico">
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJava.js"></script>
+<script type="text/javascript" src="js/shBrushXml.js"></script>
+<script type="text/javascript" src="js/shBrushBash.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript" src="js/shBrushSql.js"></script>
+<script type="text/javascript" src="js/shBrushProperties.js"></script>
+<script type="text/javascript" src="js/shBrushPlain.js"></script>
+<link type="text/css" rel="stylesheet" href="css/shCore.css">
+<link type="text/css" rel="stylesheet" href="css/shThemeEclipse.css">
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+	<table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+		<tr>
+			<td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png"
+					alt="Jetty Logo"></a><br>
+			<span style="font-size: small"> Version: 9.2.3.v20140905</span></td>
+			<td style="width: 50%"><script type="text/javascript">
+				(function() {
+					var cx = '016459005284625897022:obd4lsai2ds';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = (document.location.protocol == 'https:' ? 'https:'
+							: 'http:')
+							+ '//www.google.com/cse/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				})();
+			</script>
+				<gcse:search></gcse:search></td>
+		</tr>
+	</table>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader">
+		<table width="100%" summary="Navigation header">
+			<tr>
+				<th colspan="3" align="center">第6章 &nbsp; 配置 Jetty Connectors</th>
+			</tr>
+			<tr>
+				<td width="20%" align="left"><a accesskey="p" href="setting-form-size.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<th width="60%" align="center">Part&nbsp;II.&nbsp;Jetty 配置<br>
+				<a accesskey="p" href="index.html"><i class="icon-home"></i> Home</a></th>
+				<td width="20%" align="right">&nbsp;<a accesskey="n" href="configuring-ssl.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+	<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout">
+		<h5 class="callout">
+			<a href="http://www.webtide.com/">Contact the core Jetty developers at <span class="website">www.webtide.com</span></a>
+		</h5>
+		<p>private support for your internal/customer projects ... custom extensions and distributions ... versioned
+			snapshots for indefinite support ... scalability guidance for your apps and Ajax/Comet projects ... development
+			services from 1 day to full product delivery</p>
+	</div>
+	<div class="chapter">
+		<div class="titlepage">
+			<div>
+				<div>
+					<h2 class="title">
+						<a name="configuring-connectors"></a>第6章 &nbsp; 配置 Jetty Connectors
+					</h2>
+				</div>
+			</div>
+		</div>
+		<div class="toc">
+			<p>
+				<b>目录</b>
+			</p>
+			<dl>
+				<dt>
+					<span class="section"><a href="configuring-connectors.html#jetty-connectors">Connector 配置概览</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="configuring-ssl.html">配置 SSL</a></span>
+				</dt>
+				<dt>
+					<span class="section"><a href="setting-port80-access.html">为非Root(Non-Root)用户设置80端口访问</a></span>
+				</dt>
+			</dl>
+		</div>
+		<p>这章讨论了配置 Jetty connectors 的各种选项.</p>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h2 class="title" style="clear: both">
+							<a name="jetty-connectors"></a>Connector 配置概览
+						</h2>
+					</div>
+				</div>
+			</div>
+			<div class="toc">
+				<dl>
+					<dt>
+						<span class="section"><a href="configuring-connectors.html#d0e4135">构造一个 <code class="code">ServerConnector</code></a></span>
+					</dt>
+					<dt>
+						<span class="section"><a href="configuring-connectors.html#jetty-connectors-network-settings">网络设置.</a></span>
+					</dt>
+					<dt>
+						<span class="section"><a href="configuring-connectors.html#jetty-connectors-http-configuration">HTTP 配置</a></span>
+					</dt>
+					<dt>
+						<span class="section"><a href="configuring-connectors.html#d0e4345">SSL Context 配置</a></span>
+					</dt>
+					<dt>
+						<span class="section"><a href="configuring-connectors.html#d0e4377">配置 Connection 工厂</a></span>
+					</dt>
+				</dl>
+			</div>
+			<p>
+				Connectors 是 Jetty 为各种协议接收网络连接的机制.配置一个 connector 是如下配置的组合:
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" type="disc">
+					<li class="listitem"><p>connector 自身的网络参数(比如: 监听端口).</p></li>
+					<li class="listitem"><p>connector 使用的服务(比如: executors, schedulers).</p></li>
+					<li class="listitem"><p>连接工厂为接收的连接实例化和配置协议.</p></li>
+				</ul>
+			</div>
+			<p>
+				Jetty 主要使用一个称为 <a class="link"
+					href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ServerConnector.html"
+					target="_top">ServerConnector</a> 的 connector.
+			</p>
+			<div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+				xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+				xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+				xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note"
+				style="margin-left: 0.5in; margin-right: 0.5in;">
+				<h3 class="title">
+					<i class="icon-asterisk"></i> 注意
+				</h3>
+				<p>
+					在 Jetty 9 之前,connector 的类型指定了协议和使用的实现(比如,基于非阻塞 I/O 的 selector vs 阻塞 I/O, 或者 SSL connector vs 非 SSL connector).
+					Jetty 9 只有一个基于非阻塞 I/O connector 的 selector, 一些 <a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ConnectionFactory.html"
+						target="_top"><code class="code">ConnectionFactories</code></a>
+					在 connector 上配置协议.
+				</p>
+			</div>
+			<p>
+				标准的 Jetty 分发包自带了如下的 Jetty XML 文件,创建和配置 connectors;在阅读这节之前你应该查看一下它们.
+			</p>
+			<div class="variablelist">
+				<dl>
+					<dt>
+						<span class="term"><a class="link"
+							href="http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/plain/jetty-server/src/main/config/etc/jetty-http.xml"
+							target="_top"><code class="filename">jetty-http.xml</code></a></span>
+					</dt>
+					<dd>
+						<p>
+							实例化一个 <a class="link"
+								href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ServerConnector.html"
+								target="_top"><code class="code">ServerConnector</code></a> 接收 HTTP 连接 (可以被升级为 WebSocket 连接).
+						</p>
+					</dd>
+					<dt>
+						<span class="term"><a class="link"
+							href="http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/plain/jetty-server/src/main/config/etc/jetty-https.xml"
+							target="_top"><code class="filename">jetty-https.xml</code></a></span>
+					</dt>
+					<dd>
+						<p>
+							实例化一个 <a class="link"
+								href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ServerConnector.html"
+								target="_top"><code class="code">ServerConnector</code></a> 接收 SSL/TLS 连接.
+							在 SSL 后面的 <code class="code">ConnectionFactory</code> 是一个 HTTP <code class="code">ConnectionFactories</code>,
+							因此 SSL/TLS 连接将执行 HTTP 协议.
+						</p>
+					</dd>
+					<dt>
+						<span class="term"><a class="link"
+							href="http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/plain/jetty-spdy/spdy-example-webapp/src/main/config/example-jetty-spdy.xml"
+							target="_top"><code class="filename">example-jetty-spdy.xml</code></a></span>
+					</dt>
+					<dd>
+						<p>
+							实例化一个 <a class="link"
+								href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ServerConnector.html"
+								target="_top"><code class="code">ServerConnector</code></a> 
+							接收 SSL 连接,执行 HTTP 或 SPDY 传输.一开始,SSL 连接被链接到下一代协议协商(NPN) 连接,最终使用一个它和客户端协商的协议的连接替换自身;
+							这种协议可能是 SPDY 或 HTTP 的一个版本.如果客户端不支持 NPN,被假定为是 HTTP.
+						</p>
+					</dd>
+				</dl>
+			</div>
+			<p>
+				通常除了监听端口(see <a class="link"
+					href="configuring-connectors.html#jetty-connectors-network-settings" title="Network Settings.">网络连接</a>),
+				你需要在 connectors 上配置的东西非常少,也许要启用 <code class="code">X-Forwarded-For</code> 定制(<a class="link" href="configuring-connectors.html#jetty-connectors-http-configuration"
+					title="HTTP Configuration">HTTP 配置</a>).大多数其它设置只用于专家进行配置.
+			</p>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h3 class="title">
+								<a name="d0e4135"></a>构造一个
+								<code class="code">ServerConnector</code>
+							</h3>
+						</div>
+					</div>
+				</div>
+				<p>
+					一个 <a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ServerConnector.html"
+						target="_top"> <code class="code">ServerConnector</code>
+					</a> 实例使用的服务通过构造注入设置,一旦实例化不能被修改.大部分服务可以是默认值 null 或 0,所以一个合理的默认值将被使用,因此对于大多数目的,
+					只需要 Server 和 connection 工厂需要被传递到 connector 构造.在 Jetty XML 中(也就是 <a class="link"
+						href="http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/plain/jetty-server/src/main/config/etc/jetty-http.xml"
+						target="_top"> <code class="filename">jetty-http.xml</code>
+					</a>),你可以这么做:
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<New class="org.eclipse.jetty.server.ServerConnector">
+  <Arg name="server"><Ref refid="Server" /></Arg>
+  <Arg name="factories">
+    <Array type="org.eclipse.jetty.server.ConnectionFactory">
+      <!-- insert one or more factories here -->
+    </Array>
+  </Arg>
+  <!-- set connector fields here -->
+</New> ]]>
+        </script>
+				</div>
+				<p>
+					在 <a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ServerConnector.html#ServerConnector%28org.eclipse.jetty.server.Server,%20java.util.concurrent.Executor,%20org.eclipse.jetty.util.thread.Scheduler,%20org.eclipse.jetty.io.ByteBufferPool,%20int,%20int,%20org.eclipse.jetty.server.ConnectionFactory...%29"
+						target="_top">Javadoc</a>
+					中你可以看到其它的参数可以被传递,当构造一个 <code class="code">ServerConnector</code> 的时候.
+					通常默认值满足大部分的部署.	
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h3 class="title">
+								<a name="jetty-connectors-network-settings"></a>网络设置
+							</h3>
+						</div>
+					</div>
+				</div>
+				<p>
+					你可以通过在 connector 启动之前在它上面调用 setters 来配置 connector 网络设置.
+					比如,你可以使用 Jetty XML 来设置端口:
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<New class="org.eclipse.jetty.server.ServerConnector">
+  <Arg name="server"><Ref refid="Server" /></Arg>
+  <Arg name="factories"><!-- insert one or more factories here --></Arg>
+
+  <Set name="port">8080</Set>
+</New>   ]]>
+        </script>
+				</div>
+				<p>
+					Jetty XML 中的值可以被参数化,这样它们可以从属性文件中被传递或在命令行中设置.
+					因此通常端口在 Jetty XML 中设置,但是使用 <code class="code">Property</code> 元素来定制.
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<New class="org.eclipse.jetty.server.ServerConnector">
+  <Arg name="server"><Ref refid="Server" /></Arg>
+  <Arg name="factories"><!-- insert one or more factories here --></Arg>
+
+  <Set name="port"><Property name="jetty.port" default="8080"/></Set>
+</New>  ]]>
+        </script>
+				</div>
+				<p>
+					你可以在 <a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ServerConnector.html"
+						target="_top"> <code class="code">ServerConnector</code>
+					设置的网络设置包括:
+				</p>
+				<div class="table">
+					<a name="d0e4189"></a>
+					<p class="title">
+						<b>表&nbsp;6.1.&nbsp;Connector 配置</b>
+					</p>
+					<div class="table-contents">
+						<table summary="Connector Configuration" border="1">
+							<colgroup>
+								<col>
+								<col>
+							</colgroup>
+							<thead>
+								<tr>
+									<th>字段</th>
+									<th>描述</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>host</td>
+									<td>The network interface this connector binds to as an IP address or a hostname. If null or 0.0.0.0, bind
+										to all interfaces.
+										这个 connector 要绑定作为 IP 地址或主机名称的网络接口.如果 null 或0.0.0.0,绑定到所有的接口.
+									</td>
+								</tr>
+								<tr>
+									<td>port</td>
+									<td>
+										connector 配置的端口或可被使用的 0 作为随机可用端口(选择的端口通过 <code class="code">getLocalPort()</code> 可用).
+									</td>
+								</tr>
+								<tr>
+									<td>idleTimeout</td>
+									<td>连接在它被关闭之前的空闲时间(毫秒).</td>
+								</tr>
+								<tr>
+									<td>defaultProtocol</td>
+									<td>
+										用来选择一个 <code class="code">ConnectionFactory</code> 实例的默认协议的名称.
+										这个默认是加入到 connector 上的第一个 <code class="code">ConnectionFactory</code>.
+									</td>
+								</tr>
+								<tr>
+									<td>stopTimeout</td>
+									<td>在优雅停止一个 connector 之前等待的时间(毫秒).</td>
+								</tr>
+								<tr>
+									<td>acceptQueueSize</td>
+									<td>
+										等待连接 backlog 的大小.确切的解释是 JVM 和操作系统特定的,你可以忽略它.较高的值允许更多的连接在一个 acceptor 线程上等待.
+										因为确切的解释是部署依赖的,最好是保持这个值为默认值,除非对于一个特定的 OS 有一个特定的连接问题你需要解决.
+									</td>
+								</tr>
+								<tr>
+									<td>reuseAddress</td>
+									<td>
+										允许服务器套接字被重新绑定即使处于 <a class="link"
+										href="http://www.ssfnet.org/Exchange/tcp/tcpTutorialNotes.html" target="_top">TIME_WAIT</a> 状态.
+										对于服务器而言让这个默认为 true 通常是 OK 的.
+									</td>
+								</tr>
+								<tr>
+									<td>soLingerTime</td>
+									<td>
+										一个 &gt;=0 的值设置套接字的 <a class="link"
+										href="http://stackoverflow.com/questions/3757289/tcp-option-so-linger-zero-when-its-required" target="_top">
+											SO_LINGER</a>,单位为毫秒.Jetty 尝试使用适当的半关闭语义优雅的关闭所有的 TCP/IP 连接,
+											所以一个 linge timeout 不是必须的,因此默认为 -1.
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<br class="table-break">
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h3 class="title">
+								<a name="jetty-connectors-http-configuration"></a>HTTP 配置
+							</h3>
+						</div>
+					</div>
+				</div>
+				<p>
+					<a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/HttpConfiguration.html"
+						target="_top">HttpConfiguration</a> 类持有 <a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/HttpChannel.html" target="_top">
+						<code class="code">HTTPChannel</code>
+					</a>s 的配置,你可以与每个 HTTP 连接创建 1:1 的关系或在一个多路复用的 SPDY 连接上创建 1:n 的关系.因此一个 <code class="code">HTTPConfiguration</code> 
+					对象可以被注入到 HTTP 和 SPDY 两种连接工厂中.为了避免重复配置,标准的 Jetty 分发包在 <a class="link"
+						href="http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/plain/jetty-server/src/main/config/etc/jetty.xml"
+						target="_top"> <code class="filename">jetty.xml</code> </a> 中创建了通用的 <code class="code">HttpConfiguration</code> 实例,
+					然后在 <a class="link"
+						href="http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/plain/jetty-server/src/main/config/etc/jetty-http.xml"
+						target="_top"> <code class="filename">jetty-http.xml</code>
+					</a>,<a class="link"
+						href="http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/plain/jetty-server/src/main/config/etc/jetty-https.xml"
+						target="_top"> <code class="filename">jetty-https.xml</code>
+					</a> 和 <a class="link"
+						href="http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/plain/jetty-spdy/spdy-example-webapp/src/main/config/example-jetty-spdy.xml"
+						target="_top"> <code class="filename">example-jetty-spdy.xml</code>
+					</a>. 中使用一个 <code class="code">Ref</code> 元素,
+					
+				</p>
+				<p>
+					<a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/HttpConfiguration.html"
+						target="_top"> HttpConfiguration</a> 的一个典型配置是:
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<New id="httpConfig" class="org.eclipse.jetty.server.HttpConfiguration">
+  <Set name="secureScheme">https</Set>
+  <Set name="securePort"><Property name="jetty.tls.port" default="8443" /></Set>
+  <Set name="outputBufferSize">32768</Set>
+  <Set name="requestHeaderSize">8192</Set>
+  <Set name="responseHeaderSize">8192</Set>
+
+  <Call name="addCustomizer">
+    <Arg><New class="org.eclipse.jetty.server.ForwardedRequestCustomizer"/></Arg>
+  </Call>
+</New>]]>
+        </script>
+				</div>
+				<p>
+					这里示例添加了一个 <a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ForwardedRequestCustomizer.html"
+						target="_top"> <code class="code">ForwardedRequestCustomizer</code>
+					</a>
+					来处理 <a class="link" href="http://en.wikipedia.org/wiki/X-Forwarded-For" target="_top">X-Forward-For</a>
+					和相关的协议 headers.
+					<code class="filename">jetty-https.xml</code> 可以引用使用 ID "httpConfig" 创建的实例.
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<Call name="addConnector">
+  <Arg>
+    <New class="org.eclipse.jetty.server.ServerConnector">
+      <Arg name="server"><Ref refid="Server" /></Arg>
+      <Arg name="factories">
+        <Array type="org.eclipse.jetty.server.ConnectionFactory">
+          <Item>
+            <New class="org.eclipse.jetty.server.HttpConnectionFactory">
+              <Arg name="config"><Ref refid="httpConfig" /></Arg>
+            </New>
+          </Item>
+        </Array>
+      </Arg>
+      <!-- ... -->
+    </New>
+  </Arg>
+</Call>]]>
+        </script>
+				</div>
+				<p>
+					对于基于 SSL 的 connectors(在 <code class="filename">jetty-https.xml</code> 和 <code class="filename"> jetty-spdy.xml</code>) 中,
+					通用的 "httpConfig" 实例用来作为创建一个 ID 为 "tlsHttpConfig" 的 SSL 特定配置的基础:
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<New id="tlsHttpConfig" class="org.eclipse.jetty.server.HttpConfiguration">
+  <Arg><Ref refid="httpConfig"/></Arg>
+  <Call name="addCustomizer">
+    <Arg><New class="org.eclipse.jetty.server.SecureRequestCustomizer"/></Arg>
+  </Call>
+</New>]]>
+        </script>
+				</div>
+				<p>
+					这个添加了一个 <code class="code">SecureRequestCustomizer</code>,增加了 SSL Session IDs 和认证信息作为请求属性.
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h3 class="title">
+								<a name="d0e4345"></a>SSL Context 配置
+							</h3>
+						</div>
+					</div>
+				</div>
+				<p>
+					The SSL/TLS connectors for HTTPS and SPDY require a certificate to establish a secure connection. Jetty holds
+					certificates in standard JVM keystores and are configured as keystore and truststores on a <a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/util/ssl/SslContextFactory.html"
+						target="_top"> <code class="code">SslContextFactory</code>
+					</a> instance that is injected into an <a class="link"
+						href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/SslConnectionFactory.html"
+						target="_top"> <code class="code">SslConnectionFactory</code>
+					</a> instance. An example using the keystore distributed with Jetty (containing a self signed test certificate) is in <a
+						class="link"
+						href="http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/plain/jetty-server/src/main/config/etc/jetty-https.xml"
+						target="_top"> <code class="filename">jetty-https.xml</code>
+					</a> and <a class="link"
+						href="http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/plain/jetty-spdy/spdy-example-webapp/src/main/config/example-jetty-spdy.xml"
+						target="_top"> <code class="filename">example-jetty-spdy.xml</code>
+					</a>. Read more about SSL keystores in <a class="link" href="configuring-ssl.html" title="Configuring SSL">Configuring
+						SSL</a>.
+						
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h3 class="title">
+								<a name="d0e4377"></a>Configuring Connection 工厂
+							</h3>
+						</div>
+					</div>
+				</div>
+				<p>
+					<code class="code">ConnectionFactory</code> 被注入到一个 <code class="code">ServerConnector</code>
+					创建协议处理用于网络端点和 conector 接收的 Connection 实例.因此,在 Jetty 设置中的 connectors 的不同实例的主要变化是它们支持的协议的工厂配置.
+					除了选择哪个工厂去使用,通常是没有工厂需要配置的除了注入 <code class="code">HTTPConfiguration</code> 或 <code class="code">SslContextFactory</code> 
+					实例外.
+				</p>
+				<p>
+					Jetty 分发包中最简单的示例是 <a class="link"
+						href="http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/plain/jetty-server/src/main/config/etc/jetty-http.xml"
+						target="_top"> <code class="filename">jetty-http.xml</code>
+					</a>:
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+                   <![CDATA[<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<!-- ============================================================= -->
+<!-- Configure the Jetty Server instance with an ID "Server"       -->
+<!-- by adding a HTTP connector.                                   -->
+<!-- This configuration must be used in conjunction with jetty.xml -->
+<!-- ============================================================= -->
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+
+  <!-- =========================================================== -->
+  <!-- Add a HTTP Connector.                                       -->
+  <!-- Configure an o.e.j.server.ServerConnector with a single     -->
+  <!-- HttpConnectionFactory instance using the common httpConfig  -->
+  <!-- instance defined in jetty.xml                               -->
+  <!--                                                             -->
+  <!-- Consult the javadoc of o.e.j.server.ServerConnector and     -->
+  <!-- o.e.j.server.HttpConnectionFactory for all configuration    -->
+  <!-- that may be set here.                                       -->
+  <!-- =========================================================== -->
+  <Call name="addConnector">
+    <Arg>
+      <New class="org.eclipse.jetty.server.ServerConnector">
+        <Arg name="server"><Ref refid="Server" /></Arg>
+        <Arg name="acceptors" type="int"><Property name="http.acceptors" default="-1"/></Arg>
+        <Arg name="selectors" type="int"><Property name="http.selectors" default="-1"/></Arg>
+        <Arg name="factories">
+          <Array type="org.eclipse.jetty.server.ConnectionFactory">
+            <Item>
+              <New class="org.eclipse.jetty.server.HttpConnectionFactory">
+                <Arg name="config"><Ref refid="httpConfig" /></Arg>
+              </New>
+            </Item>
+          </Array>
+        </Arg>
+        <Set name="host"><Property name="jetty.host" /></Set>
+        <Set name="port"><Property name="jetty.port" default="80" /></Set>
+        <Set name="idleTimeout"><Property name="http.timeout" default="30000"/></Set>
+        <Set name="soLingerTime"><Property name="http.soLingerTime" default="-1"/></Set>
+        <Set name="acceptorPriorityDelta"><Property name="http.acceptorPriorityDelta" default="0"/></Set>
+        <Set name="selectorPriorityDelta"><Property name="http.selectorPriorityDelta" default="0"/></Set>
+      </New>
+    </Arg>
+  </Call>
+
+</Configure>
+]]>
+        </script>
+				</div>
+				<p>
+					这里 connector 只有单个的 <code class="code">ConnectionFactory</code>,
+					当一个连接被接收,<code class="code">HttpConnectionFactory</code> 创建一个 <code class="code">HttpConnection.</code>
+				</p>
+				<p>
+					一个更加复杂的示例是 <code class="filename">jetty-spdy.xml</code> 包括了多个 connection 工厂:
+				</p>
+				<div class="informalexample">
+					<script type="syntaxhighlighter" class="brush: plain;toolbar: false">
+          <![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+
+    <New id="sslContextFactory" class="org.eclipse.jetty.util.ssl.SslContextFactory">
+        <Set name="keyStorePath">src/main/resources/keystore.jks</Set>
+        <Set name="keyStorePassword">storepwd</Set>
+        <Set name="trustStorePath">src/main/resources/truststore.jks</Set>
+        <Set name="trustStorePassword">storepwd</Set>
+        <Set name="protocol">TLSv1</Set>
+    </New>
+
+    <New id="tlsHttpConfig" class="org.eclipse.jetty.server.HttpConfiguration">
+        <Arg>
+            <New id="httpConfig" class="org.eclipse.jetty.server.HttpConfiguration">
+                <Set name="secureScheme">https</Set>
+                <Set name="securePort">
+                    <Property name="jetty.tls.port" default="8443"/>
+                </Set>
+                <Set name="outputBufferSize">32768</Set>
+                <Set name="requestHeaderSize">8192</Set>
+                <Set name="responseHeaderSize">8192</Set>
+
+                <!-- Uncomment to enable handling of X-Forwarded- style headers
+                <Call name="addCustomizer">
+                    <Arg><New class="org.eclipse.jetty.server.ForwardedRequestCustomizer"/></Arg>
+                </Call>
+                -->
+            </New>
+        </Arg>
+        <Call name="addCustomizer">
+            <Arg>
+                <New class="org.eclipse.jetty.server.SecureRequestCustomizer"/>
+            </Arg>
+        </Call>
+    </New>
+
+    <New id="pushStrategy" class="org.eclipse.jetty.spdy.server.http.ReferrerPushStrategy">
+        <!-- Uncomment to blacklist browsers for this push strategy. If one of the blacklisted Strings occurs in the
+             user-agent header sent by the client, push will be disabled for this browser. This is case insensitive" -->
+        <!--
+        <Set name="UserAgentBlacklist">
+            <Array type="String">
+                <Item>.*(?i)firefox/14.*</Item>
+                <Item>.*(?i)firefox/15.*</Item>
+                <Item>.*(?i)firefox/16.*</Item>
+            </Array>
+        </Set>
+        -->
+
+        <!-- Uncomment to override default file extensions to push -->
+        <!--
+        <Set name="PushRegexps">
+            <Array type="String">
+               <Item>.*\.css</Item>
+               <Item>.*\.js</Item>
+               <Item>.*\.png</Item>
+               <Item>.*\.jpg</Item>
+               <Item>.*\.gif</Item>
+           </Array>
+        </Set>
+        -->
+        <Set name="referrerPushPeriod">5000</Set>
+        <Set name="maxAssociatedResources">32</Set>
+    </New>
+
+    <Call id="sslConnector" name="addConnector">
+        <Arg>
+            <New class="org.eclipse.jetty.server.ServerConnector">
+                <Arg name="server"><Ref refid="Server"/></Arg>
+                <Arg name="factories">
+                    <Array type="org.eclipse.jetty.server.ConnectionFactory">
+
+                        <!-- SSL Connection factory with NPN as next protocol -->
+                        <Item>
+                            <New class="org.eclipse.jetty.server.SslConnectionFactory">
+                                <Arg name="next">npn</Arg>
+                                <Arg name="sslContextFactory">
+                                    <Ref refid="sslContextFactory"/>
+                                </Arg>
+                            </New>
+                        </Item>
+
+                        <!-- NPN Connection factory with HTTP as default protocol -->
+                        <Item>
+                            <New class="org.eclipse.jetty.spdy.server.NPNServerConnectionFactory">
+                                <Arg name="protocols">
+                                    <Array type="String">
+                                        <Item>spdy/3</Item>
+                                        <Item>spdy/2</Item>
+                                        <Item>http/1.1</Item>
+                                    </Array>
+                                </Arg>
+                                <Set name="defaultProtocol">http/1.1</Set>
+                            </New>
+                        </Item>
+
+                        <!-- SPDY/3 Connection factory -->
+                        <Item>
+                            <New class="org.eclipse.jetty.spdy.server.http.HTTPSPDYServerConnectionFactory">
+                                <Arg name="version" type="int">3</Arg>
+                                <Arg name="config">
+                                    <Ref refid="tlsHttpConfig"/>
+                                </Arg>
+                                <Arg name="pushStrategy">
+                                    <Ref refid="pushStrategy"/>
+                                </Arg>
+                            </New>
+                        </Item>
+
+                        <!-- SPDY/2 Connection factory -->
+                        <Item>
+                            <New class="org.eclipse.jetty.spdy.server.http.HTTPSPDYServerConnectionFactory">
+                                <Arg name="version" type="int">2</Arg>
+                                <Arg name="config">
+                                    <Ref refid="tlsHttpConfig"/>
+                                </Arg>
+                            </New>
+                        </Item>
+
+                        <!-- HTTP Connection factory -->
+                        <Item>
+                            <New class="org.eclipse.jetty.server.HttpConnectionFactory">
+                                <Arg name="config">
+                                    <Ref refid="tlsHttpConfig"/>
+                                </Arg>
+                            </New>
+                        </Item>
+                    </Array>
+                </Arg>
+
+                <Set name="port">8443</Set>
+            </New>
+        </Arg>
+    </Call>
+
+</Configure>
+]]>
+        </script>
+				</div>
+				<p>在这里例子中创建了5个连接工厂,通过它们的协议名称链接在了一起:</p>
+				<div class="variablelist">
+					<dl>
+						<dt>
+							<span class="term">"SSL-npn"</span>
+						</dt>
+						<dd>
+							<p>
+								默认的协议通过第一个 connection 工厂标识,在这个例子中是一个 <code class="code">SslConnectionFactory</code> 实例,
+								使用 "npn" 作为下一代协议.因此接收的端点和一个 <code class="code">SslConnection</code> 关联,被链接到由 "npn" 连接工厂创建的  
+								<code class="code">NextProtoNegoServerConnection</code> 实例.
+							</p>
+						</dd>
+						<dt>
+							<span class="term">"npn"</span>
+						</dt>
+						<dd>
+							<p>
+								这是 <code class="code">NPNServerConnectionFactory</code>,链接到 <code class="code">SslConnectionFactory</code>.
+								NPS 连接和客户端协商下一代的协议,然后查找工厂的名称创建一个连接替代 NPN 连接.如果 NPN 不支持,默认协议配置为 "http/1.1".
+							</p>
+						</dd>
+						<dt>
+							<span class="term">"spdy/3"</span>
+						</dt>
+						<dd>
+							<p>工厂 NPN 连接使用如果 SPDY 版本 3 被协商.</p>
+						</dd>
+						<dt>
+							<span class="term">"spdy/2"</span>
+						</dt>
+						<dd>
+							<p>工厂 NPN 连接使用如果 SPDY 版本 2 被协商</p>
+						</dd>
+						<dt>
+							<span class="term">"http/1.1"</span>
+						</dt>
+						<dd>
+							<p>
+								工厂 NPN 连接使用如果 HTTP 版本 1.1 被协商,或者如果 NPN 不被支持.
+								注意 HTTP/1.1 也可以处理 HTTP/1.0.
+							</p>
+						</dd>
+					</dl>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		SyntaxHighlighter.all()
+	</script>
+	<div class="navfooter">
+		<hr>
+		<table width="100%" summary="Navigation footer">
+			<tr>
+				<td width="40%" align="left"><a accesskey="p" href="setting-form-size.html"><i class="icon-chevron-left"></i>
+						Previous</a>&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="u" href="configuring.html"><i class="icon-chevron-up"></i> Top</a></td>
+				<td width="40%" align="right">&nbsp;<a accesskey="n" href="configuring-ssl.html">Next <i
+						class="icon-chevron-right"></i></a></td>
+			</tr>
+			<tr>
+				<td width="40%" align="left" valign="top">Setting Max Form Size&nbsp;</td>
+				<td width="20%" align="center"><a accesskey="h" href="index.html"><i class="icon-home"></i> Home</a></td>
+				<td width="40%" align="right" valign="top">&nbsp;Configuring SSL</td>
+			</tr>
+		</table>
+	</div>
+	<p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times">
+	<div class="jetty-callout">
+		See an error or something missing? <span class="callout"><a
+			href="http://github.com/jetty-project/jetty-documentation">Contribute to this documentation at <span
+				class="website"><i class="icon-github"></i> Github!</span></a></span><span style="float: right"><i>(Generated:
+				2014-10-21T11:19:23+08:00)</i></span>
+	</div>
+	</p>
+	<script xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension"
+		xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook"
+		xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net"
+		xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-1149868-7' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</body>
+</html>
